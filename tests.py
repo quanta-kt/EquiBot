@@ -30,11 +30,10 @@ class TestPrefixCommand(unittest.TestCase):
         """
         Tests the SQL functions of this command
         """
-        
+
         GUILD_ID = 55
 
         self.assertEquals(repo.get_prefix(GUILD_ID), '~')
-        self.assertEquals(sql.get_guild_prefix(55), '~')
 
         sql.update_guild_prefix(55, "%")
         self.assertEquals(repo.get_prefix(GUILD_ID), '%')
