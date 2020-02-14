@@ -10,6 +10,7 @@ respective classes.
 """
 
 import unittest
+import repository as repo
 import sqlhelper as sql
 import os
 
@@ -28,12 +29,14 @@ class TestPrefixCommand(unittest.TestCase):
         Tests the SQL functions of this command
         """
 
+        GUILD_ID = 55
+
         sql.init_prefix_table()
 
-        self.assertEquals(sql.get_guild_prefix(55), '~')
+        self.assertEquals(repo.get_prefix(GUILD_ID), '~')
 
         sql.update_guild_prefix(55, "%")
-        self.assertEquals(sql.get_guild_prefix(55), '%')
+        self.assertEquals(repo.get_prefix(GUILD_ID), '%')
 
 if __name__ == '__main__':
     unittest.main()
