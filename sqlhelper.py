@@ -109,6 +109,7 @@ def delete_moderator_role(entry_key):
         conn = connect_db()
         cursor = conn.cursor()
         cursor.execute(sql_delete_modrole, (entry_key,))
+        conn.commit()
     except sqlite3.Error as e:
         sys.stderr.write(e)
     finally:

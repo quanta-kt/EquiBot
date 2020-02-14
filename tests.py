@@ -63,6 +63,10 @@ class TestModRoleCommand(unittest.TestCase):
         )
 
         self.assertFalse(
+            repo.delete_mod_role(self.GUILD1, self.ROLE1)
+        )
+
+        self.assertFalse(
             repo.delete_mod_role(self.GUILD1, self.ROLE2)
         )
 
@@ -72,6 +76,16 @@ class TestModRoleCommand(unittest.TestCase):
 
         self.assertTrue(
             repo.delete_mod_role(self.GUILD2, self.ROLE1)
+        )
+
+
+        #These two stay in db
+        self.assertTrue(
+            repo.add_mod_role(self.GUILD1, self.ROLE2)
+        )
+
+        self.assertTrue(
+            repo.add_mod_role(self.GUILD2, self.ROLE2)
         )
 
 if __name__ == '__main__':
