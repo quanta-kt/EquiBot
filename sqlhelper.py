@@ -35,11 +35,10 @@ def init_prefix_table():
     except sqlite3.Error as e:
         sys.stderr.write(e)
     finally:
-        if conn:
-            conn.close()
+        if conn: conn.close()
 
 
-def get_guild_prefix(guild_id):    
+def get_guild_prefix(guild_id):
     try:
         conn = connect_db()
         cursor = conn.cursor()
@@ -54,8 +53,7 @@ def get_guild_prefix(guild_id):
     except sqlite3.Error as e:
         sys.stderr.write(e)
     finally:
-        if conn:
-            conn.close()
+        if conn: conn.close()
 
 def update_guild_prefix(guild_id, new_prefix):
     try:
@@ -66,5 +64,4 @@ def update_guild_prefix(guild_id, new_prefix):
     except sqlite3.Error as e:
         sys.stderr.write(e)
     finally:
-        if conn:
-            conn.close()
+        if conn: conn.close()

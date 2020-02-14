@@ -5,10 +5,7 @@ import constants
 import repository
 
 def get_prefix(bot, message):
-    ret = repository.get_prefix(message.channel.guild.id)
-    print(ret)
-    print("ddd")
-    return ret
+    return repository.get_prefix(message.channel.guild.id)
 
 bot = commands.Bot(command_prefix=get_prefix, description="""General purpose bot for Eqvivalent.""")
 
