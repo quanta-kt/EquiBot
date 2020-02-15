@@ -49,9 +49,9 @@ def connect_db():
             print("Connected to database")
             return conn
         else:
-            sys.stderr.write("Cannot create database connection. ;-;")
-    except sqlite3.Error as error:
-        sys.stderr.write(error)
+            raise sqlite3.Error("Can not connect to database!")
+    except sqlite3.Error as e:
+        print(e, file=sys.stderr)
 
 def create_tables():
     try:
@@ -60,7 +60,7 @@ def create_tables():
         cursor.execute(sql_create_prefix_table)
         cursor.execute(sql_create_modrole_table)
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -78,7 +78,7 @@ def get_guild_prefix(guild_id):
             return result[0]
 
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -89,7 +89,7 @@ def update_guild_prefix(guild_id, new_prefix):
         cursor.execute(sql_update_prefix_for_guild, (guild_id, new_prefix))
         conn.commit()
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -100,7 +100,7 @@ def add_moderator_role(guild_id, role_id):
         cursor.execute(sql_insert_modrole, (guild_id, role_id))
         conn.commit()
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -111,7 +111,7 @@ def delete_moderator_role(entry_key):
         cursor.execute(sql_delete_modrole, (entry_key,))
         conn.commit()
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -122,7 +122,7 @@ def get_moderator_roles(guild_id):
         cursor.execute(sql_get_modroles, (guild_id,))
         return cursor.fetchall()
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close()
 
@@ -134,6 +134,6 @@ def get_moderator_roles_with_index(guild_id):
         cursor.execute(sql_get_modroles_and_index, (guild_id,))
         return cursor.fetchall()
     except sqlite3.Error as e:
-        sys.stderr.write(e)
+        print(e, file=sys.stderr)
     finally:
         if conn: conn.close
