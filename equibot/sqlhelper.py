@@ -1,6 +1,5 @@
 import sqlite3
 import sys
-import constants
 
 sql_create_prefix_table = """
     CREATE TABLE IF NOT EXISTS prefixes(

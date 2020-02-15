@@ -1,0 +1,2 @@
+import equibot
+equibot.main()
