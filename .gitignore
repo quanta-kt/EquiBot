@@ -1,5 +1,4 @@
 **/__pycache__/**
-.pytestcache/**
 
 database.sql
 secrets.json
