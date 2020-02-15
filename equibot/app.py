@@ -54,9 +54,9 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
         else:
             await ctx.send(f'{role.name} is not a moderator!')
 
-def main():
+def main(debug=False):
     repository.init()
-    bot.run(repository.get_bot_token(constants.DEBUG))
+    bot.run(repository.get_bot_token(debug))
 
 if __name__ == '__main__':
     main()
