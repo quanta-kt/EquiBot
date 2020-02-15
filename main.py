@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from discord.ext import commands
+import discord
 import constants
 import repository
 
@@ -27,14 +28,30 @@ async def prefix(ctx, new_prefix):
 
     await ctx.send('Prefix set to: "{}"'.format(new_prefix))
 
-@bot.command
-async def modrole(ctx, action, role):
+@bot.command()
+async def modrole(ctx: commands.Context, action: str, role: discord.Role):
     """
     Add or remove moderator roles.
     action: add/remove
     """
-    #TODO: Implement!
-    pass
+
+    action = action.lower()
+
+    if action == 'add':
+        result = repository.add_mod_role(ctx.guild.id, role.id)
+
+        if result:
+            await ctx.send(f'Added moderator role: {role.name}')
+        else:
+            await ctx.send(f'{role.name} is already moderator!')
+
+    elif action == 'remove':
+        result = repository.delete_mod_role(ctx.guild.id, role.id)
+
+        if result:
+            await ctx.send(f'Removed moderator role: {role.name}')
+        else:
+            await ctx.send(f'{role.name} is not a moderator!')
 
 repository.init()
 bot.run(repository.get_bot_token(True))
