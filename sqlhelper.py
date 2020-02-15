@@ -46,7 +46,6 @@ def connect_db():
     try:
         conn = sqlite3.connect('database.sql')
         if conn != None:
-            print("Connected to database")
             return conn
         else:
             raise sqlite3.Error("Can not connect to database!")
