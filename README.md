@@ -17,6 +17,18 @@ Please make sure you write tests in `tests.py` whenever necessary.
 
 ## Usage and setup
 
+### Clone
+Get the copy of this repo with Git:
+```
+git clone https://github.com/abhijeet-nkt/EqviBot
+```
+
+### Install
+Run the `setup.py` file to install the bot right away!
+```
+python setup.py install
+```
+
 ### Setup bot tokens
 Before you can test/deploy the bot, you need to create a file named 'secrets.json' with the following content:
 
@@ -26,13 +38,19 @@ Before you can test/deploy the bot, you need to create a file named 'secrets.jso
     "production_token": "Insert your token of the bot being used for production"
 }
 ```
-Token which will be used can be changed by changing the `DEBUG` variable in the `constants.py` file. If set to true, debug token will be used, otherwise the production one will be used.
+`debug_token` will only be used if you pass the command line argument `--debug`.
 
 ### Run
-Simply run the `main.py` file to start the bot. ;)
+Make sure you're in the directory where the `secrets.json` is stored.
+Now run the bot using:
+```
+python -m EquiBot
+```
 
-### Test
-Tests are written in `tests.py`.
+In order to use the debug bot token instead, use:
+```
+python -m EquiBot --debug
+```
 
 ## Contact
 Discord: Quanta#4037

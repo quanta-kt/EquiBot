@@ -10,9 +10,8 @@ respective classes.
 """
 
 import unittest
-import repository as repo
-import sqlhelper as sql
-import repository as repo
+from . import repository as repo
+from . import sqlhelper as sql
 import os
 
 #Remove the comment to delete the `database.sql` file automatically.
@@ -88,5 +87,8 @@ class TestModRoleCommand(unittest.TestCase):
             repo.add_mod_role(self.GUILD2, self.ROLE2)
         )
 
-if __name__ == '__main__':
+def main():
     unittest.main()
+
+if __name__ == '__main__':
+    exit(main())

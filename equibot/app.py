@@ -2,8 +2,9 @@
 
 from discord.ext import commands
 import discord
-import constants
-import repository
+
+from . import constants
+from . import repository
 
 def get_prefix(bot, message):
     return repository.get_prefix(message.channel.guild.id)
@@ -53,5 +54,9 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
         else:
             await ctx.send(f'{role.name} is not a moderator!')
 
-repository.init()
-bot.run(repository.get_bot_token(constants.DEBUG))
+def main(debug=False):
+    repository.init()
+    bot.run(repository.get_bot_token(debug))
+
+if __name__ == '__main__':
+    main()
