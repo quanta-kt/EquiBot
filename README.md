@@ -13,7 +13,7 @@ I have planned to add these features to the bot, you're welcome to edit this fil
 ## Contributing
 This project is open for any suggestions, PRs and feature requests. :smile:
 
-Please make sure you write tests for any feature you add in `tests.py` whenever necessary.
+Please make sure you write tests in `tests.py` whenever necessary.
 
 ## Usage and setup
 
