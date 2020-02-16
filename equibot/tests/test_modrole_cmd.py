@@ -1,3 +1,5 @@
+import pytest
+
 from .. import repository
 
 #Fixtures
@@ -9,20 +11,21 @@ GUILD2 = 66
 ROLE1 = 5
 ROLE2 = 3
 
-def test_add_remove():
-    repo = repository.Repository('_test.db')
+@pytest.mark.asyncio()
+async def test_add_remove():
+    repo = await repository.Repository.create('_test.db')
 
-    assert repo.add_mod_role(GUILD1, ROLE1)
-    assert repo.add_mod_role(GUILD2, ROLE1)
+    assert await repo.add_mod_role(GUILD1, ROLE1)
+    assert await repo.add_mod_role(GUILD2, ROLE1)
 
-    assert repo.delete_mod_role(GUILD1, ROLE1)
+    assert await repo.delete_mod_role(GUILD1, ROLE1)
 
-    assert not repo.delete_mod_role(GUILD1, ROLE1)
-    assert not repo.delete_mod_role(GUILD1, ROLE2)
-    assert not repo.delete_mod_role(GUILD2, ROLE2)
+    assert not await repo.delete_mod_role(GUILD1, ROLE1)
+    assert not await repo.delete_mod_role(GUILD1, ROLE2)
+    assert not await repo.delete_mod_role(GUILD2, ROLE2)
 
-    assert repo.delete_mod_role(GUILD2, ROLE1)
+    assert await repo.delete_mod_role(GUILD2, ROLE1)
 
     #These two stay in db
-    assert repo.add_mod_role(GUILD1, ROLE2)
-    assert repo.add_mod_role(GUILD2, ROLE2)
+    assert await repo.add_mod_role(GUILD1, ROLE2)
+    assert await repo.add_mod_role(GUILD2, ROLE2)
