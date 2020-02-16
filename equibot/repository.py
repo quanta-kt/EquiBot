@@ -66,3 +66,13 @@ class Repository:
             return True
 
         return False
+
+    def get_all_mod_roles(self, guild_id):
+        """
+        Returns map of all role IDs registered as moderator.
+        """
+        
+        return map(
+            lambda t : t[0],
+            self.sql.get_moderator_roles(guild_id)
+        )

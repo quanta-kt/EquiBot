@@ -6,3 +6,6 @@ dist/**
 database.db
 _test.db
 secrets.json
+
+#VS Code configurations
+.vscode/**

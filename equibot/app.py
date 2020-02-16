@@ -23,12 +23,19 @@ async def prefix(ctx, new_prefix):
     Changes the prefix for the bot in your server.
     """
 
-    if (ctx.author == ctx.guild.owner):
-        repo.set_prefix(ctx.message.channel.guild.id, new_prefix)
-    else:
+    #Checks if one of sender's roles is a registered moderator role
+    def hasModRole():
+        modroles = repo.get_all_mod_roles(ctx.guild.id)
+        for role in ctx.author.roles:
+            if role.id in modroles:
+                return True
+        return False
+
+    if not (ctx.author == ctx.guild.owner or hasModRole()):
         await ctx.send("You are not allowed to change the prefix. ;-;")
         return
 
+    repo.set_prefix(ctx.guild.id, new_prefix)
     await ctx.send('Prefix set to: "{}"'.format(new_prefix))
 
 @bot.command()
@@ -37,6 +44,10 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
     Add or remove moderator roles.
     action: add/remove
     """
+
+    if ctx.author != ctx.guild.owner:
+        await ctx.send('Only owner can use this command. ;-;')
+        return
 
     action = action.lower()
 
