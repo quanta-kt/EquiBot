@@ -45,7 +45,7 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
     action: add/remove
     """
 
-    if ctx.sender != ctx.guild.owner:
+    if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
         return
 
