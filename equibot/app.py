@@ -41,14 +41,10 @@ async def prefix(ctx, *args):
 
     new_prefix = args[0]
 
-    r = discord.utils.find(
+    isModerator = discord.utils.find(
         lambda modrole: modrole in ctx.author.roles,
         await repo.get_all_mod_roles(ctx.guild.id)
-    )
-
-    isModerator = r != None
-
-    print(f"isModerator = {isModerator} : {r}")
+    ) != None
 
     if not (ctx.author == ctx.guild.owner or isModerator):
         await ctx.send("You are not allowed to change the prefix. ;-;")
