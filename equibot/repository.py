@@ -80,10 +80,16 @@ class Repository:
         Returns list of all role IDs registered as moderator.
         """
         
+<<<<<<< HEAD
         return list(
             map(
                 lambda t : t[0],
                 self.sql.get_moderator_roles(guild_id)
             )
 >>>>>>> Fix permission checks (#11)
+=======
+        return map(
+            lambda t : t[0],
+            self.sql.get_moderator_roles(guild_id)
+>>>>>>> Move modrole actions to sub-commands
         )
