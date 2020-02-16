@@ -47,9 +47,9 @@ async def modrole(ctx: commands.Context):
 
     if ctx.invoked_subcommand == None:
         await ctx.send(
-            f"""Invalid arguments!
-            Usage:
-            {repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]"""
+            "**Invalid arguments!**\n" +
+            "```Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]```"
         )
 
 @modrole.command(name='add')
