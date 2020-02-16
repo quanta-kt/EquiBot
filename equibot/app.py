@@ -133,6 +133,49 @@ async def modrole_remove(ctx: commands.Context, *args):
     else:
         await ctx.send(f'{role.name} is not a moderator!')
 
+@bot.command()
+async def clear(ctx: commands.Context, *args):
+    """
+    Deletes a specified number of messages from the channel.
+    Deletes 10 messages if a number was not specified.
+    """
+
+    isModeratorOrOwner = discord.utils.find(
+        lambda modrole: modrole in ctx.author.roles,
+        await repo.get_all_mod_roles(ctx.guild.id)
+    ) != None or ctx.author == ctx.guild.owner
+
+    if not isModeratorOrOwner:
+        await ctx.send("You're not allowed to issue this command. ;-;")
+        return
+
+    n = 10
+
+    if len(args) > 1:
+        await ctx.send(
+            "**Too many arguments!**" +
+            "```" +
+            "Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}" +
+            "clear [number of messages]"
+            "```"
+        )
+
+        return
+
+    if len(args) == 1:
+        if not args[0].isnumeric():
+            await ctx.send(f"{args[0]} is not a proper number. ;-;")
+            return
+
+        n = int(args[0])
+
+    async for message in ctx.channel.history(limit = n + 1): # +1 for command message
+        await message.delete()
+
+    notice = await ctx.send(f"Deleted ***{n}*** messages, RIP!")
+    await notice.delete(delay=5) #Fades away too! ;)
+
 def main(debug=False):
     bot.run(repository.get_bot_token(debug))
 
