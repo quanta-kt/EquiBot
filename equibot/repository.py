@@ -3,16 +3,34 @@ import json
 from . import sqlhelper
 from . import constants
 
-"""
-Repository for storage using SQL.
-This is basically a bridge between sqlhelper and app
-"""
+#This is left as non-async for a purose
+def get_bot_token(debug=False):
+    """
+    Returns the Bot's Token for Auth with Discord.
+    Set debug to True when using testing Bot.
+    """
+    with open('secrets.json') as fp:
+        dat = json.load(fp)
+
+        if debug:
+            return dat['debug_token']
+        else:
+            return dat['production_token']
 
 class Repository:
+    """
+    Repository for storage using SQL.
+    This is basically a bridge between sqlhelper and app
+    """
 
-    def __init__(self, sql_file=constants.DATBASE_FILE):
-        self.sql = sqlhelper.SqlHelper(sql_file)
+    @classmethod
+    async def create(cls, sql_file=constants.DATBASE_FILE):
+        repo = Repository()
+        repo.sql = await sqlhelper.SqlHelper.create(sql_file)
+        return repo
 
+    #This function isn't async because we need to use it
+    #outside the coroutines
     def get_prefix(self, guild_id):
         prefix = self.sql.get_guild_prefix(guild_id)
 
@@ -21,58 +39,45 @@ class Repository:
 
         return prefix
 
-    def set_prefix(self, guild_id, new_prefix):
-        self.sql.update_guild_prefix(guild_id, new_prefix)
+    async def set_prefix(self, guild_id, new_prefix):
+        await self.sql.update_guild_prefix(guild_id, new_prefix)
 
-    def get_bot_token(self, debug=False):
-        """
-        Returns the Bot's Token for Auth with Discord.
-        Set debug to True when using testing Bot.
-        """
-        with open('secrets.json') as fp:
-            dat = json.load(fp)
-
-            if debug:
-                return dat['debug_token']
-            else:
-                return dat['production_token']
-
-    def add_mod_role(self, guild_id, role_id):
+    async def add_mod_role(self, guild_id, role_id):
         """
         Adds the moderator role for the gluid to the db.
         Returns False if the role was already present, True otherwise.
         """
 
-        entries = self.sql.get_moderator_roles(guild_id)
+        entries = await self.sql.get_moderator_roles(guild_id)
         if (role_id,) in entries:
             return False
 
-        self.sql.add_moderator_role(guild_id, role_id)
+        await self.sql.add_moderator_role(guild_id, role_id)
         return True
 
-    def delete_mod_role(self, guild_id, to_delete):
+    async def delete_mod_role(self, guild_id, to_delete):
         """
         Removes the moderator role for the gluid to from the db.
         Returns False if the role was not present, True otherwise.
         """
 
-        entries = self.sql.get_moderator_roles_with_index(guild_id)
+        entries = await self.sql.get_moderator_roles_with_index(guild_id)
 
         for index, role_id in entries:
             if role_id != to_delete:
                 continue
 
-            self.sql.delete_moderator_role(index)
+            await self.sql.delete_moderator_role(index)
             return True
 
         return False
 
-    def get_all_mod_roles(self, guild_id):
+    async def get_all_mod_roles(self, guild_id):
         """
         Returns map of all role IDs registered as moderator.
         """
         
         return map(
             lambda t : t[0],
-            self.sql.get_moderator_roles(guild_id)
+            await self.sql.get_moderator_roles(guild_id)
         )

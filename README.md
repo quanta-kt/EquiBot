@@ -53,9 +53,10 @@ python -m EquiBot --debug
 ```
 
 ### Test
-EquiBot uses `pytest` for unit testing. To run these unit tests, you need to install `pytest`
+EquiBot uses `pytest` for unit testing. To run these unit tests, you need to install `pytest` and `pytest-asyncio`
 ```
 pip install pytest
+pip install pytest-asyncio
 ```
 
 Now simply run `pytest` from the project's root directory,
