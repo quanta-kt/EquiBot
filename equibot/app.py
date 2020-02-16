@@ -23,20 +23,34 @@ async def on_ready():
     repo = await repository.Repository.create()
 
 @bot.command()
-async def prefix(ctx, new_prefix):
+async def prefix(ctx, *args):
     """
     Changes the prefix for the bot in your server.
     """
 
-    #Checks if one of sender's roles is a registered moderator role
-    async def hasModRole():
-        modroles = await repo.get_all_mod_roles(ctx.guild.id)
-        for role in ctx.author.roles:
-            if role.id in modroles:
-                return True
-        return False
+    if len(args) != 1:
+        await ctx.send(
+            "**Invalid arguments**\n" +
+            "```" +
+            "Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}prefix [new prefix]"
+            "```"
+        )
+        
+        return
 
-    if not (ctx.author == ctx.guild.owner or hasModRole()):
+    new_prefix = args[0]
+
+    r = discord.utils.find(
+        lambda modrole: modrole in ctx.author.roles,
+        await repo.get_all_mod_roles(ctx.guild.id)
+    )
+
+    isModerator = r != None
+
+    print(f"isModerator = {isModerator} : {r}")
+
+    if not (ctx.author == ctx.guild.owner or isModerator):
         await ctx.send("You are not allowed to change the prefix. ;-;")
         return
 
@@ -58,9 +72,29 @@ async def modrole(ctx: commands.Context):
         )
 
 @modrole.command(name='add')
-async def modrole_add(ctx: commands.Context, role: discord.Role):
+async def modrole_add(ctx: commands.Context, *args):
     if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
+        return
+
+    if len(args) != 1:
+        await ctx.send(
+            "**Invalid arguments!**\n" +
+            "```" +
+            "Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]" +
+            "```"
+        )
+
+        return
+
+    role = discord.utils.find(
+        lambda role: role.name == args[0] or role.mention == args[0],
+        ctx.guild.roles
+    )
+
+    if role == None:
+        await ctx.send(f"Can't find role with name: {args[0]}")
         return
 
     result = await repo.add_mod_role(ctx.guild.id, role.id)
@@ -71,9 +105,29 @@ async def modrole_add(ctx: commands.Context, role: discord.Role):
         await ctx.send(f'{role.name} is already moderator!')
 
 @modrole.command(name='remove')
-async def modrole_remove(ctx: commands.Context, role: discord.Role):
+async def modrole_remove(ctx: commands.Context, *args):
     if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
+        return
+
+    if len(args) != 1:
+        await ctx.send(
+            "**Invalid arguments!**\n" +
+            "```" +
+            "Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]" +
+            "```"
+        )
+
+        return
+
+    role = discord.utils.find(
+        lambda role: role.name == args[0] or role.mention == args[0],
+        ctx.guild.roles
+    )
+
+    if role == None:
+        await ctx.send(f"Can't find role with name: {args[0]}")
         return
     
     result = await repo.delete_mod_role(ctx.guild.id, role.id)
