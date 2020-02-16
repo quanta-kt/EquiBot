@@ -6,10 +6,12 @@ import discord
 from . import constants
 from . import repository
 
-def get_prefix(bot, message):
-    return repository.get_prefix(message.channel.guild.id)
+bot = commands.Bot(
+    command_prefix = lambda bot, message : repo.get_prefix(message.channel.guild.id),
+    description="""General purpose bot for Eqvivalent."""
+)
 
-bot = commands.Bot(command_prefix=get_prefix, description="""General purpose bot for Eqvivalent.""")
+repo = repository.Repository()
 
 @bot.event
 async def on_ready():
@@ -22,7 +24,7 @@ async def prefix(ctx, new_prefix):
     """
 
     if (ctx.author == ctx.guild.owner):
-        repository.set_prefix(ctx.message.channel.guild.id, new_prefix)
+        repo.set_prefix(ctx.message.channel.guild.id, new_prefix)
     else:
         await ctx.send("You are not allowed to change the prefix. ;-;")
         return
@@ -39,7 +41,7 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
     action = action.lower()
 
     if action == 'add':
-        result = repository.add_mod_role(ctx.guild.id, role.id)
+        result = repo.add_mod_role(ctx.guild.id, role.id)
 
         if result:
             await ctx.send(f'Added moderator role: {role.name}')
@@ -47,7 +49,7 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
             await ctx.send(f'{role.name} is already moderator!')
 
     elif action == 'remove':
-        result = repository.delete_mod_role(ctx.guild.id, role.id)
+        result = repo.delete_mod_role(ctx.guild.id, role.id)
 
         if result:
             await ctx.send(f'Removed moderator role: {role.name}')
@@ -55,8 +57,7 @@ async def modrole(ctx: commands.Context, action: str, role: discord.Role):
             await ctx.send(f'{role.name} is not a moderator!')
 
 def main(debug=False):
-    repository.init()
-    bot.run(repository.get_bot_token(debug))
+    bot.run(repo.get_bot_token(debug))
 
 if __name__ == '__main__':
     main()

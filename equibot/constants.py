@@ -1,1 +1,2 @@
 DEFAULT_COMMAND_PREFIX = "~"
+DATBASE_FILE = "database.db"

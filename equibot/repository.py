@@ -5,61 +5,64 @@ from . import constants
 
 """
 Repository for storage using SQL.
-This is basically a bridge between sqlhelper.py and main.py
+This is basically a bridge between sqlhelper and app
 """
 
-init = sqlhelper.create_tables
+class Repository:
 
-def get_prefix(guild_id):
-    prefix = sqlhelper.get_guild_prefix(guild_id)
-    
-    if prefix == None:
-        return constants.DEFAULT_COMMAND_PREFIX
-    
-    return prefix
+    def __init__(self, sql_file=constants.DATBASE_FILE):
+        self.sql = sqlhelper.SqlHelper(sql_file)
 
-def set_prefix(guild_id, new_prefix):
-    sqlhelper.update_guild_prefix(guild_id, new_prefix)
+    def get_prefix(self, guild_id):
+        prefix = self.sql.get_guild_prefix(guild_id)
 
-def get_bot_token(debug=False):
-    """
-    Returns the Bot's Token for Auth with Discord.
-    Set debug to True when using testing Bot.
-    """
-    with open('secrets.json') as fp:
-        dat = json.load(fp)
+        if prefix == None:
+            return constants.DEFAULT_COMMAND_PREFIX
 
-        if debug:
-            return dat['debug_token']
-        else:
-            return dat['production_token']
+        return prefix
 
-def add_mod_role(guild_id, role_id):
-    """
-    Adds the moderator role for the gluid to the db.
-    Returns False if the role was already present, True otherwise.
-    """
+    def set_prefix(self, guild_id, new_prefix):
+        self.sql.update_guild_prefix(guild_id, new_prefix)
 
-    entries = sqlhelper.get_moderator_roles(guild_id)
-    if (role_id,) in entries:
-        return False
+    def get_bot_token(self, debug=False):
+        """
+        Returns the Bot's Token for Auth with Discord.
+        Set debug to True when using testing Bot.
+        """
+        with open('secrets.json') as fp:
+            dat = json.load(fp)
 
-    sqlhelper.add_moderator_role(guild_id, role_id)
-    return True
+            if debug:
+                return dat['debug_token']
+            else:
+                return dat['production_token']
 
-def delete_mod_role(guild_id, to_delete):
-    """
-    Removes the moderator role for the gluid to from the db.
-    Returns False if the role was not present, True otherwise.
-    """
+    def add_mod_role(self, guild_id, role_id):
+        """
+        Adds the moderator role for the gluid to the db.
+        Returns False if the role was already present, True otherwise.
+        """
 
-    entries = sqlhelper.get_moderator_roles_with_index(guild_id)
+        entries = self.sql.get_moderator_roles(guild_id)
+        if (role_id,) in entries:
+            return False
 
-    for index, role_id in entries:
-        if role_id != to_delete:
-            continue
-
-        sqlhelper.delete_moderator_role(index)
+        self.sql.add_moderator_role(guild_id, role_id)
         return True
 
-    return False
+    def delete_mod_role(self, guild_id, to_delete):
+        """
+        Removes the moderator role for the gluid to from the db.
+        Returns False if the role was not present, True otherwise.
+        """
+
+        entries = self.sql.get_moderator_roles_with_index(guild_id)
+
+        for index, role_id in entries:
+            if role_id != to_delete:
+                continue
+
+            self.sql.delete_moderator_role(index)
+            return True
+
+        return False
