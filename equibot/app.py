@@ -35,7 +35,7 @@ async def prefix(ctx, new_prefix):
         await ctx.send("You are not allowed to change the prefix. ;-;")
         return
 
-    repo.set_prefix(ctx.message.channel.guild.id, new_prefix)
+    repo.set_prefix(ctx.guild.id, new_prefix)
     await ctx.send('Prefix set to: "{}"'.format(new_prefix))
 
 @bot.command()
