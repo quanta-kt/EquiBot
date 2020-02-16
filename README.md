@@ -13,7 +13,7 @@ I have planned to add these features to the bot, you're welcome to edit this fil
 ## Contributing
 This project is open for any suggestions, PRs and feature requests. :smile:
 
-Please make sure you write tests in `tests.py` whenever necessary.
+Please make sure you write any necessary tests in `tests` sub-module.
 
 ## Usage and setup
 
@@ -51,6 +51,14 @@ In order to use the debug bot token instead, use:
 ```
 python -m EquiBot --debug
 ```
+
+### Test
+EquiBot uses `pytest` for unit testing. To run these unit tests, you need to install `pytest`
+```
+pip install pytest
+```
+
+Now simply run `pytest` from the project's root directory,
 
 ## Contact
 Discord: Quanta#4037
