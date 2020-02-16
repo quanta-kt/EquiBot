@@ -54,7 +54,7 @@ async def modrole(ctx: commands.Context):
 
 @modrole.command(name='add')
 async def modrole_add(ctx: commands.Context, role: discord.Role):
-    if ctx.author.id != ctx.guild.owner.id:
+    if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
         return
 
@@ -67,7 +67,7 @@ async def modrole_add(ctx: commands.Context, role: discord.Role):
 
 @modrole.command(name='remove')
 async def modrole_remove(ctx: commands.Context, role: discord.Role):
-    if ctx.author.id != ctx.guild.owner.id:
+    if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
         return
     
