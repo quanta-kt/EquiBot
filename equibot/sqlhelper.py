@@ -44,6 +44,10 @@ sql_delete_modrole = """
     WHERE id = ?"""
 
 class SqlHelper:
+    """
+    Class used for running SQL queries.
+    Not to be used directly, use `Repository` class for reading/writing data.
+    """
 
     @classmethod
     async def create(cls, filename):
