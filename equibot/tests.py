@@ -10,15 +10,15 @@ respective classes.
 """
 
 import unittest
-from . import repository as repo
-from . import sqlhelper as sql
+from . import repository
 import os
 
 #Remove the comment to delete the `database.sql` file automatically.
 #This can be helpful for easing out the process.
 #DO NOT commit to git with the comment removed.
 # os.remove('database.sql')
-sql.create_tables()
+
+repo = repository.Repository('_test.db')
 
 class TestPrefixCommand(unittest.TestCase):
     """
@@ -34,7 +34,7 @@ class TestPrefixCommand(unittest.TestCase):
 
         self.assertEquals(repo.get_prefix(GUILD_ID), '~')
 
-        sql.update_guild_prefix(55, "%")
+        repo.set_prefix(55, "%")
         self.assertEquals(repo.get_prefix(GUILD_ID), '%')
 
 class TestModRoleCommand(unittest.TestCase):

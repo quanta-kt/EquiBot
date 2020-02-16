@@ -3,5 +3,6 @@ build/**
 dist/**
 *.egg-info/**
 
-database.sql
+database.db
+_test.db
 secrets.json
