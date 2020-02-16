@@ -2,20 +2,25 @@
 
 from discord.ext import commands
 import discord
+import asyncio
 
 from . import constants
 from . import repository
 
 bot = commands.Bot(
-    command_prefix = lambda bot, message : repo.get_prefix(message.channel.guild.id),
+    command_prefix = lambda bot, message:
+            repo.get_prefix(message.channel.guild.id),
+
     description="""General purpose bot for Eqvivalent."""
 )
 
-repo = repository.Repository()
+repo = None #Initiated in `on_ready()`
 
 @bot.event
 async def on_ready():
     print("Bot online.")
+    global repo
+    repo = await repository.Repository.create()
 
 @bot.command()
 async def prefix(ctx, new_prefix):
@@ -24,8 +29,8 @@ async def prefix(ctx, new_prefix):
     """
 
     #Checks if one of sender's roles is a registered moderator role
-    def hasModRole():
-        modroles = repo.get_all_mod_roles(ctx.guild.id)
+    async def hasModRole():
+        modroles = await repo.get_all_mod_roles(ctx.guild.id)
         for role in ctx.author.roles:
             if role.id in modroles:
                 return True
@@ -35,7 +40,7 @@ async def prefix(ctx, new_prefix):
         await ctx.send("You are not allowed to change the prefix. ;-;")
         return
 
-    repo.set_prefix(ctx.guild.id, new_prefix)
+    await repo.set_prefix(ctx.guild.id, new_prefix)
     await ctx.send('Prefix set to: "{}"'.format(new_prefix))
 
 @bot.group()
@@ -58,7 +63,7 @@ async def modrole_add(ctx: commands.Context, role: discord.Role):
         await ctx.send('Only owner can use this command. ;-;')
         return
 
-    result = repo.add_mod_role(ctx.guild.id, role.id)
+    result = await repo.add_mod_role(ctx.guild.id, role.id)
 
     if result:
         await ctx.send(f'Added moderator role: {role.name}')
@@ -71,7 +76,7 @@ async def modrole_remove(ctx: commands.Context, role: discord.Role):
         await ctx.send('Only owner can use this command. ;-;')
         return
     
-    result = repo.delete_mod_role(ctx.guild.id, role.id)
+    result = await repo.delete_mod_role(ctx.guild.id, role.id)
 
     if result:
         await ctx.send(f'Removed moderator role: {role.name}')
@@ -79,7 +84,7 @@ async def modrole_remove(ctx: commands.Context, role: discord.Role):
         await ctx.send(f'{role.name} is not a moderator!')
 
 def main(debug=False):
-    bot.run(repo.get_bot_token(debug))
+    bot.run(repository.get_bot_token(debug))
 
 if __name__ == '__main__':
     main()

@@ -45,9 +45,12 @@ sql_delete_modrole = """
 
 class SqlHelper:
 
-    def __init__(self, filename):
-        self.db_file = filename
-        self.create_tables()
+    @classmethod
+    async def create(cls, filename):
+        sql = SqlHelper()
+        sql.db_file = filename
+        await sql.create_tables()
+        return sql
 
     def connect_db(self):
         try:
@@ -59,7 +62,7 @@ class SqlHelper:
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
 
-    def create_tables(self):
+    async def create_tables(self):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -88,7 +91,7 @@ class SqlHelper:
         finally:
             if conn: conn.close()
 
-    def update_guild_prefix(self, guild_id, new_prefix):
+    async def update_guild_prefix(self, guild_id, new_prefix):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -99,7 +102,7 @@ class SqlHelper:
         finally:
             if conn: conn.close()
 
-    def add_moderator_role(self, guild_id, role_id):
+    async def add_moderator_role(self, guild_id, role_id):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -110,7 +113,7 @@ class SqlHelper:
         finally:
             if conn: conn.close()
 
-    def delete_moderator_role(self, entry_key):
+    async def delete_moderator_role(self, entry_key):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -121,7 +124,7 @@ class SqlHelper:
         finally:
             if conn: conn.close()
 
-    def get_moderator_roles(self, guild_id):
+    async def get_moderator_roles(self, guild_id):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
@@ -133,7 +136,7 @@ class SqlHelper:
             if conn: conn.close()
 
     #Index refers to the PRIMARY KEY column of the table
-    def get_moderator_roles_with_index(self, guild_id):
+    async def get_moderator_roles_with_index(self, guild_id):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()
