@@ -38,34 +38,45 @@ async def prefix(ctx, new_prefix):
     repo.set_prefix(ctx.guild.id, new_prefix)
     await ctx.send('Prefix set to: "{}"'.format(new_prefix))
 
-@bot.command()
-async def modrole(ctx: commands.Context, action: str, role: discord.Role):
+@bot.group()
+async def modrole(ctx: commands.Context):
     """
     Add or remove moderator roles.
     action: add/remove
     """
 
+    if ctx.invoked_subcommand == None:
+        await ctx.send(
+            "**Invalid arguments!**\n" +
+            "```Usage:\n" +
+            f"{repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]```"
+        )
+
+@modrole.command(name='add')
+async def modrole_add(ctx: commands.Context, role: discord.Role):
     if ctx.author != ctx.guild.owner:
         await ctx.send('Only owner can use this command. ;-;')
         return
 
-    action = action.lower()
+    result = repo.add_mod_role(ctx.guild.id, role.id)
 
-    if action == 'add':
-        result = repo.add_mod_role(ctx.guild.id, role.id)
+    if result:
+        await ctx.send(f'Added moderator role: {role.name}')
+    else:
+        await ctx.send(f'{role.name} is already moderator!')
 
-        if result:
-            await ctx.send(f'Added moderator role: {role.name}')
-        else:
-            await ctx.send(f'{role.name} is already moderator!')
+@modrole.command(name='remove')
+async def modrole_remove(ctx: commands.Context, role: discord.Role):
+    if ctx.author != ctx.guild.owner:
+        await ctx.send('Only owner can use this command. ;-;')
+        return
+    
+    result = repo.delete_mod_role(ctx.guild.id, role.id)
 
-    elif action == 'remove':
-        result = repo.delete_mod_role(ctx.guild.id, role.id)
-
-        if result:
-            await ctx.send(f'Removed moderator role: {role.name}')
-        else:
-            await ctx.send(f'{role.name} is not a moderator!')
+    if result:
+        await ctx.send(f'Removed moderator role: {role.name}')
+    else:
+        await ctx.send(f'{role.name} is not a moderator!')
 
 def main(debug=False):
     bot.run(repo.get_bot_token(debug))
