@@ -132,10 +132,6 @@ async def modrole_remove(ctx: commands.Context, *args):
 
         return
 
-    if not await util.isModeratorOrOwner(ctx, repo):
-        await ctx.send("You're not allowed to issue this command. ;-;")
-        return
-
     role = discord.utils.find(
         lambda role: role.name == args[0] or role.mention == args[0],
         ctx.guild.roles
@@ -158,6 +154,10 @@ async def clear(ctx: commands.Context, *args):
     Deletes a specified number of messages from the channel.
     Deletes 10 messages if a number was not specified.
     """
+
+    if not await util.isModeratorOrOwner(ctx, repo):
+        await ctx.send("You're not allowed to issue this command. ;-;")
+        return
 
     n = 10
 
