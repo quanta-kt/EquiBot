@@ -6,6 +6,7 @@ import asyncio
 
 from . import constants
 from . import repository
+from . import util
 
 bot = commands.Bot(
     command_prefix = lambda bot, message:
@@ -154,16 +155,7 @@ async def clear(ctx: commands.Context, *args):
     Deletes 10 messages if a number was not specified.
     """
 
-    async def isModeratorOrOwner():
-        moderators = await repo.get_all_mod_roles(ctx.guild.id)
-        for mod in moderators:
-            if mod in map(lambda role: role.id, ctx.author.roles):
-                return True
-        return False
-            
-        #or ctx.author == ctx.guild.owner
-
-    if not await isModeratorOrOwner():
+    if not await util.isModeratorOrOwner(ctx, repo):
         await ctx.send("You're not allowed to issue this command. ;-;")
         return
 
