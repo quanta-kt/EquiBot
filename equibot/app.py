@@ -12,7 +12,7 @@ bot = commands.Bot(
     command_prefix = lambda bot, message:
             repo.get_prefix(message.channel.guild.id),
 
-    description="""General purpose bot for Eqvivalent."""
+    description="""A nice general purpose bot for your server"""
 )
 
 repo = None #Initiated in `on_ready()`
