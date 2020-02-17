@@ -154,12 +154,16 @@ async def clear(ctx: commands.Context, *args):
     Deletes 10 messages if a number was not specified.
     """
 
-    isModeratorOrOwner = discord.utils.find(
-        lambda modrole: modrole in ctx.author.roles,
-        await repo.get_all_mod_roles(ctx.guild.id)
-    ) != None or ctx.author == ctx.guild.owner
+    async def isModeratorOrOwner():
+        moderators = await repo.get_all_mod_roles(ctx.guild.id)
+        for mod in moderators:
+            if mod in map(lambda role: role.id, ctx.author.roles):
+                return True
+        return False
+            
+        #or ctx.author == ctx.guild.owner
 
-    if not isModeratorOrOwner:
+    if not await isModeratorOrOwner():
         await ctx.send("You're not allowed to issue this command. ;-;")
         return
 
