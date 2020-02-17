@@ -22,6 +22,20 @@ async def on_ready():
     global repo
     repo = await repository.Repository.create()
 
+@bot.event
+async def on_message(message):
+
+    if bot.user.mentioned_in(message) and not message.mention_everyone:
+        #We have got a mention!
+        prefix = repo.get_prefix(message.guild.id)
+        await message.add_reaction('👀')
+        await message.channel.send(
+            f"My prefix here is: **{prefix}**\n" +
+            f"Try **{prefix}help** to get list of commands!"
+        )
+
+    await bot.process_commands(message)
+
 @bot.command()
 async def prefix(ctx, *args):
     """
