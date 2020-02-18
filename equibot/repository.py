@@ -81,3 +81,29 @@ class Repository:
             lambda t : t[0],
             await self.sql.get_moderator_roles(guild_id)
         )
+
+    async def get_afk_status(self, guild_id, user_id):
+        """
+        Returns user's AFK status reason if set, None otherwise.
+        """
+
+        status = await self.sql.get_afk_status(guild_id, user_id)
+
+        if status == None:
+            return None
+        
+        return status
+
+    async def clear_afk_status(self, guild_id, user_id):
+        """
+        Clears the AFK status of the user.
+        """
+        
+        await self.sql.remove_afk_status(guild_id, user_id)
+
+    async def set_afk_status(self, guild_id, user_id, reason):
+        """
+        Sets the AFK status of the user.
+        """
+
+        await self.sql.set_afk_status(guild_id, user_id, reason)

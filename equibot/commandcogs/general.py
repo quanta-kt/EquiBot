@@ -41,3 +41,18 @@ class General(commands.Cog):
 
         await self.repo.set_prefix(ctx.guild.id, new_prefix)
         await ctx.send('Prefix set to: "{}"'.format(new_prefix))
+
+    @commands.command()
+    async def bye(self, ctx: commands.Context, *reason):
+        """
+        Set your AFK status.
+        People who mention you will get notice of you being AFK.
+        """
+
+        reason =  ' '.join(reason)
+        await self.repo.set_afk_status(ctx.guild.id, ctx.author.id, reason)
+        await ctx.send(
+            f"**Goodbye {ctx.author.display_name}!**\n**" +
+            "I've set your AFK status to:\n" +
+            f"*{reason}*"
+        )

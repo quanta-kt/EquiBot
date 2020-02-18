@@ -43,6 +43,26 @@ sql_delete_modrole = """
     DELETE FROM modroles
     WHERE id = ?"""
 
+sql_create_afk_table = """
+    CREATE TABLE IF NOT EXISTS afk_table(
+        id INTEGER PRIMARY KEY,
+        guild_id INTEGER,
+        user_id INTEGER,
+        reason TEXT
+    )"""
+
+sql_set_afk = """
+    INSERT INTO afk_table(guild_id, user_id, reason)
+    VALUES(?, ?, ?)"""
+
+sql_remove_afk = """
+    DELETE FROM afk_table
+    WHERE guild_id = ? AND user_id = ?"""
+
+sql_get_user_afk_status = """
+    SELECT reason from afk_table
+    WHERE guild_id = ? AND user_id = ?"""
+
 class SqlHelper:
     """
     Class used for running SQL queries.
@@ -72,6 +92,7 @@ class SqlHelper:
             cursor = conn.cursor()
             cursor.execute(sql_create_prefix_table)
             cursor.execute(sql_create_modrole_table)
+            cursor.execute(sql_create_afk_table)
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
         finally:
@@ -150,3 +171,42 @@ class SqlHelper:
             print(e, file=sys.stderr)
         finally:
             if conn: conn.close
+
+    async def set_afk_status(self, guild_id, user_id, reason):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_set_afk, (guild_id, user_id, reason))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def get_afk_status(self, guild_id, user_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_get_user_afk_status, (guild_id, user_id))
+            result = cursor.fetchone()
+
+            if result == None:
+                return None
+            else:
+                return result[0]
+
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def remove_afk_status(self, guild_id, user_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_remove_afk, (guild_id, user_id))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()

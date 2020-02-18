@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from discord.ext import commands
+import discord
 
 from . import repository
 from . import commandcogs
@@ -25,7 +26,7 @@ async def on_ready():
     bot.add_cog(commandcogs.Moderation(repo))
 
 @bot.event
-async def on_message(message):
+async def on_message(message: discord.Message):
 
     if bot.user.mentioned_in(message) and not message.mention_everyone:
         #We have got a mention!
@@ -34,6 +35,23 @@ async def on_message(message):
         await message.channel.send(
             f"My prefix here is: **{prefix}**\n" +
             f"Try **{prefix}help** to get list of commands!"
+        )
+
+    if (await repo.get_afk_status(message.guild.id, message.author.id)) != None:
+        await repo.clear_afk_status(message.guild.id, message.author.id)
+        await message.channel.send(
+            f"**Welcome back {message.author.display_name}!\n" +
+            "I've removed your AFK status"
+        )
+
+    for user in message.mentions:
+        afk_status = await repo.get_afk_status(message.guild.id, user.id)
+        if afk_status == None:
+            return
+
+        await message.channel.send(
+            f"Nice, but {user.display_name} is AFK.\n" +
+            f"**Reason:** {afk_status}"
         )
 
     await bot.process_commands(message)
