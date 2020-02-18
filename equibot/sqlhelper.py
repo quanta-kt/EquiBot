@@ -170,7 +170,7 @@ class SqlHelper:
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
         finally:
-            if conn: conn.close
+            if conn: conn.close()
 
     async def set_afk_status(self, guild_id, user_id, reason):
         try:
