@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 
 from .. import repository
+from .. import util
 
 class General(commands.Cog):
     """
@@ -30,12 +31,7 @@ class General(commands.Cog):
 
         new_prefix = args[0]
 
-        isModerator = discord.utils.find(
-            lambda modrole: modrole in ctx.author.roles,
-            await self.repo.get_all_mod_roles(ctx.guild.id)
-        ) != None
-
-        if not (ctx.author == ctx.guild.owner or isModerator):
+        if not (util.isModeratorOrOwner(ctx, self.repo)):
             await ctx.send("You are not allowed to change the prefix. ;-;")
             return
 
@@ -52,7 +48,7 @@ class General(commands.Cog):
         reason =  ' '.join(reason)
         await self.repo.set_afk_status(ctx.guild.id, ctx.author.id, reason)
         await ctx.send(
-            f"**Goodbye {ctx.author.display_name}!**\n**" +
+            f"**Goodbye {ctx.author.display_name}!** \n" +
             "I've set your AFK status to:\n" +
             f"*{reason}*"
         )

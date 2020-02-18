@@ -8,7 +8,7 @@ from . import commandcogs
 
 bot = commands.Bot(
     command_prefix = lambda bot, message:
-            repo.get_prefix(message.channel.guild.id),
+        repo.get_prefix(message.channel.guild.id),
 
     description="""A nice general purpose bot for your server"""
 )
@@ -40,7 +40,7 @@ async def on_message(message: discord.Message):
     if (await repo.get_afk_status(message.guild.id, message.author.id)) != None:
         await repo.clear_afk_status(message.guild.id, message.author.id)
         await message.channel.send(
-            f"**Welcome back {message.author.display_name}!\n" +
+            f"**Welcome back {message.author.display_name}!**\n" +
             "I've removed your AFK status"
         )
 
