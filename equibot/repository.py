@@ -125,7 +125,7 @@ class Repository:
 
     async def get_birthday_kids(self):
         """
-        Returns a map of user ids which have their birthday today.
+        Returns a list of user ids which have their birthday today.
         Returns n
         """
 
