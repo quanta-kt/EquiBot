@@ -10,20 +10,13 @@ class Birthdays(commands.Cog):
     def __init__(self, repo: repository.Repository):
         self.repo = repo
 
-    @commands.command()
+    @commands.command(usage='birthday [month] [day]')
     async def birthday(self, ctx: commands.Context, *args):
         """
         Add your name to birthday calendar!
         """
 
-        if len(args) != 2:
-            await ctx.send(
-                "Invalid arguments ;-;\n" +
-                "**Usage: " +
-                f"{self.repo.get_prefix(ctx.guild.id)}**" +
-                "birthday [month] [day]"
-            )
-
+        if not await util.ensure_args(ctx, 2, args):
             return
 
         month, day = None, None
@@ -49,52 +42,31 @@ class Birthdays(commands.Cog):
         Set-up birthday calendar for server!
         """
 
-        if len(args) != 2:
-            await ctx.send(
-                "Invalid arguments ;-;\n" +
-                "**Usage: " +
-                f"{self.repo.get_prefix(ctx.guild.id)}**" +
-                "birthday-setup [channel for calendar] [channel for greets]"
-            )
-
+        if not await util.ensureOwner(ctx):
             return
 
-        if not util.ensureOwner(ctx):
+        if not await util.ensure_args(ctx, 2, args):
             return
 
-        class NotFoundError(Exception): pass
+        calendar_channel = await util.find_channel_by_mention(ctx, args[0])
+        greet_channel = await util.find_channel_by_mention(ctx, args[1])
 
-        async def find_channel_or_raise(toFind):
-            result = discord.utils.find(
-                lambda channel: channel.mention == toFind,
-                ctx.guild.channels
-            )
-
-            if result == None:
-                await ctx.send(f"Can't find channel: {toFind} ;-;")
-                raise NotFoundError()
-            return result
-
-        try:
-            calendar_channel = await find_channel_or_raise(args[0])
-            greet_channel = await find_channel_or_raise(args[1])
-
-            await self.repo.set_birthday_channels(
-                ctx.guild.id,
-                calendar_channel.id,
-                greet_channel.id
-            )
-
-            await ctx.send(
-                "Awesome!\n" +
-                "I've set it up as follows:\n" +
-                f"**Bithday calendar at:** {calendar_channel.mention}\n" +
-                f"**Greetings at:** {greet_channel.mention}\n" +
-                ":3"
-            )
-
-        except NotFoundError:
+        if calendar_channel == None or greet_channel == None:
             return
+
+        await self.repo.set_birthday_channels(
+            ctx.guild.id,
+            calendar_channel.id,
+            greet_channel.id
+        )
+
+        await ctx.send(
+            "Awesome!\n" +
+            "I've set it up as follows:\n" +
+            f"**Bithday calendar at:** {calendar_channel.mention}\n" +
+            f"**Greetings at:** {greet_channel.mention}\n" +
+            ":3"
+        )
 
     async def greet_birthday(self, channel, member):
         await channel.send(f"Happy birthday {member.mention}!")
