@@ -59,8 +59,7 @@ class Birthdays(commands.Cog):
 
             return
 
-        if not util.isOwner(ctx):
-            await ctx.send("You don't have permission to issue this command. ;-;")
+        if not util.ensureOwner(ctx):
             return
 
         class NotFoundError(Exception): pass

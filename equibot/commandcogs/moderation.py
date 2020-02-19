@@ -12,35 +12,29 @@ class Moderation(commands.Cog):
     def __init__(self, repo: repository.Repository):
         self.repo = repo
 
-    @commands.group()
+    @commands.group(usage='modrole [action] [role name | role mention]')
     async def modrole(self, ctx: commands.Context):
         """
         Add or remove moderator roles.
-        action: add/remove
+        action: add | remove
         """
 
         if ctx.invoked_subcommand == None:
-            await ctx.send(
-                "**Invalid arguments!**\n" +
-                "```Usage:\n" +
-                f"{self.repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]```"
-            )
+            #Just want to throw out error
+            await util.ensure_args(ctx, -1, tuple())
 
-    @modrole.command(name='add')
+    @modrole.command(name='add', usage="modrole add [role name | role mention]")
     async def modrole_add(self, ctx: commands.Context, *args):
+        """
+        Adds a role to moderator's list.
+        This allows people with this role to issue moderation commands.
+        """
+
         if ctx.author != ctx.guild.owner:
             await ctx.send('Only owner can use this command. ;-;')
             return
 
-        if len(args) != 1:
-            await ctx.send(
-                "**Invalid arguments!**\n" +
-                "```" +
-                "Usage:\n" +
-                f"{self.repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]" +
-                "```"
-            )
-
+        if not await util.ensure_args(ctx, 1, args):
             return
 
         role = discord.utils.find(
@@ -59,21 +53,13 @@ class Moderation(commands.Cog):
         else:
             await ctx.send(f'{role.name} is already moderator!')
 
-    @modrole.command(name='remove')
+    @modrole.command(name='remove', usage='modrole remove [role name | role mention]')
     async def modrole_remove(self, ctx: commands.Context, *args):
         if ctx.author != ctx.guild.owner:
             await ctx.send('Only owner can use this command. ;-;')
             return
 
-        if len(args) != 1:
-            await ctx.send(
-                "**Invalid arguments!**\n" +
-                "```" +
-                "Usage:\n" +
-                f"{self.repo.get_prefix(ctx.guild.id)}modrole [add | remove] [role to add/remove]" +
-                "```"
-            )
-
+        if not await util.ensure_args(ctx, 1, args):
             return
 
         role = discord.utils.find(
@@ -92,37 +78,23 @@ class Moderation(commands.Cog):
         else:
             await ctx.send(f'{role.name} is not a moderator!')
 
-    @commands.command()
+    @commands.command(usage='clear [number of messages]')
     async def clear(self, ctx: commands.Context, *args):
         """
         Deletes a specified number of messages from the channel.
-        Deletes 10 messages if a number was not specified.
         """
 
-        if not await util.isModeratorOrOwner(ctx, self.repo):
-            await ctx.send("You're not allowed to issue this command. ;-;")
+        if not await util.ensureModeratorOrOwner(ctx, self.repo):
             return
 
-        n = 10
-
-        if len(args) > 1:
-            await ctx.send(
-                "**Too many arguments!**" +
-                "```" +
-                "Usage:\n" +
-                f"{self.repo.get_prefix(ctx.guild.id)}" +
-                "clear [number of messages]"
-                "```"
-            )
-
+        if not await util.ensure_args(ctx, 1, args):
             return
 
-        if len(args) == 1:
-            if not args[0].isnumeric():
-                await ctx.send(f"{args[0]} is not a proper number. ;-;")
-                return
+        if not args[0].isnumeric():
+            await ctx.send(f"{args[0]} is not a proper number. ;-;")
+            return
 
-            n = int(args[0])
+        n = int(args[0])
 
         async for message in ctx.channel.history(limit = n + 1): # +1 for command message
             await message.delete()
