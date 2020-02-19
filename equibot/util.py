@@ -13,3 +13,9 @@ async def isModeratorOrOwner(ctx, repo):
         if mod in map(lambda role: role.id, ctx.author.roles):
             return True
     return False
+
+def isOwner(ctx):
+    """
+    Returns true of sender is the server owner.
+    """
+    return ctx.author == ctx.guild.owner

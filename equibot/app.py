@@ -25,6 +25,10 @@ async def on_ready():
     bot.add_cog(commandcogs.General(repo))
     bot.add_cog(commandcogs.Moderation(repo))
 
+    birthdayscog = commandcogs.Birthdays(repo)
+    bot.add_cog(birthdayscog)
+    bot.loop.create_task(birthdayscog.birthday_ticker(bot))
+
 @bot.event
 async def on_message(message: discord.Message):
 
