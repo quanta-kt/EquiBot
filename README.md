@@ -59,7 +59,16 @@ pip install pytest
 pip install pytest-asyncio
 ```
 
-Now simply run `pytest` from the project's root directory,
+Now simply run `pytest` from the project's root directory.
+```
+pytest
+```
+
+Optionally, you can run tests by running the `tests` sub-module instead:
+```
+python -m equibot.tests
+```
+This allows debuggers to work for pytest cases.
 
 ## Contact
 Discord: Quanta#4037
