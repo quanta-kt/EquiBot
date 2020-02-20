@@ -8,6 +8,7 @@ I have planned to add these features to the bot, you're welcome to edit this fil
 
 - [x] Command to change the bot prefix,
 - [x] Command to add moderator roles, which have access to some special commands.
+- [x] Birthday greetings! Also draws a nice looking calendar in the specified channel.
 - [ ] Command to schedule and host 'Question Of The Day' event.
 
 ## Contributing
