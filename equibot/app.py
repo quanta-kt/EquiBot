@@ -8,7 +8,7 @@ from . import commandcogs
 
 bot = commands.Bot(
     command_prefix = lambda bot, message:
-        repo.get_prefix(message.channel.guild.id),
+        "t!",
 
     description="""A nice general purpose bot for your server"""
 )

@@ -44,3 +44,18 @@ async def test_birthday_completion():
     del repo
     repo = await Repository.create('_test.db')
     assert await repo.has_greeted_today()
+
+@pytest.mark.asyncio()
+async def test_birthday_calendar():
+
+    repo = await Repository.create('_test.db')
+
+    assert await repo.get_calendar_message_ids(GUILD_ID) == None
+
+    ids = (5, 6, 7, 5, 6, 7, 3, 66, 700, 900, 55, 7)
+    await repo.update_calendar_message_ids(GUILD_ID, ids)
+    assert await repo.get_calendar_message_ids(GUILD_ID) == ids
+
+    ids = ids[::-1]
+    await repo.update_calendar_message_ids(GUILD_ID, ids)
+    assert await repo.get_calendar_message_ids(GUILD_ID) == ids

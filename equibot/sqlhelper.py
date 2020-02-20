@@ -141,6 +141,63 @@ sql_get_bithday_completion_date = """
     WHERE id = 0
     """
 
+#Message IDs for calendar messages.
+sql_create_calendar_messages_table = """
+    CREATE TABLE IF NOT EXISTS calendar_messages(
+        guild_id    INTEGER PRIMARY KEY,
+        january     INTEGER NOT NULL,
+        february    INTEGER NOT NULL,
+        march       INTEGER NOT NULL,
+        april       INTEGER NOT NULL,
+        may         INTEGER NOT NULL,
+        june        INTEGER NOT NULL,
+        july        INTEGER NOT NULL,
+        august      INTEGER NOT NULL,
+        september   INTEGER NOT NULL,
+        october     INTEGER NOT NULL,
+        november    INTEGER NOT NULL,
+        december    INTEGER NOT NULL
+    )
+    """
+
+sql_update_calendar_message_ids = """
+    INSERT INTO calendar_messages(
+        guild_id, january, february, march,
+        april, may, june, july, august,
+        september, october, november, december
+    )
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+    ON CONFLICT(guild_id)
+    DO UPDATE SET
+        january   =  excluded.january  ,
+        february  =  excluded.february ,
+        march     =  excluded.march    ,
+        april     =  excluded.april    ,
+        may       =  excluded.may      ,
+        june      =  excluded.june     ,
+        july      =  excluded.july     ,
+        august    =  excluded.august   ,
+        september =  excluded.september,
+        october   =  excluded.october  ,
+        november  =  excluded.november ,
+        december  =  excluded.december 
+    """
+
+sql_clear_calendar_message_ids = """
+    DELETE FROM calendar_messages
+    WHERE guild_id = ?
+    """
+
+sql_get_calendar_messages = """
+    SELECT january, february, march,
+        april, may, june, july, august,
+        september, october, november, december
+
+    FROM calendar_messages
+    WHERE guild_id = ?
+    """
+
 class SqlHelper:
     """
     Class used for running SQL queries.
@@ -176,6 +233,7 @@ class SqlHelper:
             cursor.execute(sql_create_birthday_completion_table)
             cursor.execute(sql_create_birthday_completion_row)
             conn.commit()
+            cursor.execute(sql_create_calendar_messages_table)
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
         finally:
@@ -332,7 +390,7 @@ class SqlHelper:
             if result == None:
                 return None
             else:
-                return result[0]
+                return result
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
         finally:
@@ -382,6 +440,41 @@ class SqlHelper:
             conn = self.connect_db()
             cursor = conn.cursor()
             cursor.execute(sql_get_bithday_completion_date)
+
+            return cursor.fetchone()
+
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def update_calendar_message_ids(self, guild_id, ids):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_update_calendar_message_ids, (guild_id, *ids))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def clear_calendar_message_ids(self, guild_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_clear_calendar_message_ids, (guild_id,))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def get_calendar_message_ids(self, guild_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_get_calendar_messages, (guild_id,))
 
             return cursor.fetchone()
 

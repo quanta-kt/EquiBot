@@ -138,6 +138,13 @@ class Repository:
         """
         await self.sql.set_user_birthdate(user_id, month, day)
 
+    async def get_user_birthdate(self, user_id):
+        """
+        Returns the birthdate tuple of the user if set using
+        `set_birthdate`, returns None otherwise.
+        """
+        return await self.sql.get_user_birthdate(user_id)
+
     async def has_greeted_today(self):
         """
         Returns true if bot has completed greetings for today.
@@ -153,3 +160,28 @@ class Repository:
 
         date = datetime.datetime.utcnow()
         await self.sql.update_bithday_completion_date(date.month, date.day)
+
+    async def update_calendar_message_ids(self, guild_id, ids):
+        """
+        Updates/inserts the ids of messages to be used for birthday calendar.
+        Each month has it's own message.
+        `ids` should be an iterable of message ids, starting from January to December.
+        """
+
+        await self.sql.update_calendar_message_ids(guild_id, ids)
+
+    async def clear_calendar_message_ids(self, guild_id):
+        """
+        Deletes calendar message id entries for the guild.
+        To be called when birthday-setup command is issued.
+        """
+
+        await self.sql.clear_calendar_message_ids(guild_id)
+
+    async def get_calendar_message_ids(self, guild_id):
+        """
+        Returns the tuple of message ids previously set through `update_calendar_message_ids()`
+        Returns None if never set.
+        """
+
+        return await self.sql.get_calendar_message_ids(guild_id)
