@@ -8,7 +8,7 @@ from . import commandcogs
 
 bot = commands.Bot(
     command_prefix = lambda bot, message:
-        repo.get_prefix(message.channel.guild.id),
+        "t!",
 
     description="""A nice general purpose bot for your server"""
 )
@@ -24,6 +24,10 @@ async def on_ready():
     #Register COGs
     bot.add_cog(commandcogs.General(repo))
     bot.add_cog(commandcogs.Moderation(repo))
+
+    birthdayscog = commandcogs.Birthdays(repo)
+    bot.add_cog(birthdayscog)
+    bot.loop.create_task(birthdayscog.birthday_ticker(bot))
 
 @bot.event
 async def on_message(message: discord.Message):

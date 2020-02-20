@@ -1,3 +1,6 @@
+import discord
+
+
 """
 Utility funtions
 """
@@ -44,3 +47,20 @@ async def ensure_args(ctx, count, args):
         return False
 
     return True
+
+async def find_channel_by_mention(ctx, toFind):
+    """
+    Tries to find the channel by mention.
+    Sends error if fails, returning None or returns the found channel otherwise
+    """
+    channel = discord.utils.find(
+        lambda channel: channel.mention == toFind,
+        ctx.guild.channels
+    )
+
+    if channel == None:
+        await ctx.send(f"Can't find channel: {toFind} ;-;")
+
+    return channel
+
+    
