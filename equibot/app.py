@@ -43,10 +43,11 @@ async def on_message(message: discord.Message):
 
     if (await repo.get_afk_status(message.guild.id, message.author.id)) != None:
         await repo.clear_afk_status(message.guild.id, message.author.id)
-        await message.channel.send(
+        msg = await message.channel.send(
             f"**Welcome back {message.author.display_name}!**\n" +
             "I've removed your AFK status"
         )
+        await msg.delete(delay=5)
 
     for user in message.mentions:
         afk_status = await repo.get_afk_status(message.guild.id, user.id)
