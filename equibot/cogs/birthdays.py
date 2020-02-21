@@ -3,10 +3,8 @@ import discord
 import asyncio
 import calendar
 
-from .. import util
+from . import util
 from .. import repository
-
-from .calendarbuider import CalendarBuilder
 
 class Birthdays(commands.Cog):
 
@@ -65,7 +63,7 @@ class Birthdays(commands.Cog):
         builder_map = dict(
             map(
                 lambda b: (b.month, b),
-                [CalendarBuilder(month) for month in range(1, 13)]
+                [util.CalendarBuilder(month) for month in range(1, 13)]
             )
         )
 

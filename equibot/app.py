@@ -4,7 +4,7 @@ from discord.ext import commands
 import discord
 
 from . import repository
-from . import commandcogs
+from . import cogs
 
 bot = commands.Bot(
     command_prefix = lambda bot, message:
@@ -22,10 +22,10 @@ async def on_ready():
     repo = await repository.Repository.create()
 
     #Register COGs
-    bot.add_cog(commandcogs.General(repo))
-    bot.add_cog(commandcogs.Moderation(repo))
+    bot.add_cog(cogs.General(repo))
+    bot.add_cog(cogs.Moderation(repo))
 
-    birthdayscog = commandcogs.Birthdays(repo)
+    birthdayscog = cogs.Birthdays(repo)
     bot.add_cog(birthdayscog)
     bot.loop.create_task(birthdayscog.birthday_ticker(bot))
 

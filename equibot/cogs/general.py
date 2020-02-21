@@ -1,8 +1,8 @@
 from discord.ext import commands
 import discord
 
+from . import util
 from .. import repository
-from .. import util
 
 class General(commands.Cog):
     """
