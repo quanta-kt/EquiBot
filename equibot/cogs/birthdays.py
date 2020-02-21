@@ -46,12 +46,17 @@ class Birthdays(commands.Cog):
             "UmU"
         )
 
-        if not await self.update_calendar(ctx.guild):
+        try:
+            if not await self.update_calendar(ctx.guild):
+                await ctx.send(
+                    "**Note:** This Server has not registered the channels " +
+                    "to be used for greets and calendar\n" +
+                    "Owner must run birthday-setup command for calendar to work"
+                )
+        except discord.NotFound:
             await ctx.send(
-                "Note: This Server has not registered the channels " +
-                "to be used for greets and calendar, or one or more of " +
-                "calendar messages were deleted.\n" +
-                "Owner must run birthday-setup command for calendar to work"
+                "**Note:** Previously created calendar messages were deleted.\n" +
+                "You must run birthday-setup for calendar to show up."
             )
 
     async def update_calendar(self, guild: discord.Guild):
@@ -103,9 +108,6 @@ class Birthdays(commands.Cog):
             for month in range(1, 13):
                 message_id = ids[month - 1]
                 msg = await channel.fetch_message(message_id)
-                if msg == None:
-                    return False #Don't go any further.
-
                 await msg.edit(content=builder_map[month])
 
         return True
