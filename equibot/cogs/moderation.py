@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 
-from .. import util
+from . import util
 from .. import repository
 
 class Moderation(commands.Cog):
