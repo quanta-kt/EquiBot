@@ -156,7 +156,6 @@ class Birthdays(commands.Cog):
         while True:
 
             if await self.repo.has_greeted_today():
-                print("Sleeping for long time")
                 await asyncio.sleep(15)
                 continue
 
@@ -174,7 +173,6 @@ class Birthdays(commands.Cog):
                     else: print(f"Birthday channels not setup for guild: '{guild.name}' id: {guild.id}")
 
                 await self.repo.update_greet_completion_date()
-                print("Birthdays concluded.")
 
             else:
                 print("No birthdays today.")
