@@ -29,7 +29,7 @@ async def on_ready():
     bot.add_cog(birthdayscog)
     bot.loop.create_task(birthdayscog.birthday_ticker(bot))
 
-    await bot.change_presence(activity=discord.Game(name="Ping for help"))
+    await bot.change_presence(activity=discord.Game(name="Ping for help!"))
 
 @bot.event
 async def on_message(message: discord.Message):
