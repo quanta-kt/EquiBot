@@ -30,6 +30,8 @@ class Moderation(commands.Cog):
         This allows people with this role to issue moderation commands.
         """
 
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
         if ctx.author != ctx.guild.owner:
             await ctx.send('Only owner can use this command. ;-;')
             return
@@ -55,6 +57,9 @@ class Moderation(commands.Cog):
 
     @modrole.command(name='remove', usage='modrole remove [role name | role mention]')
     async def modrole_remove(self, ctx: commands.Context, *args):
+
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
         if ctx.author != ctx.guild.owner:
             await ctx.send('Only owner can use this command. ;-;')
             return
@@ -83,6 +88,8 @@ class Moderation(commands.Cog):
         """
         Deletes a specified number of messages from the channel.
         """
+
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
 
         if not await util.ensureModeratorOrOwner(ctx, self.repo):
             return

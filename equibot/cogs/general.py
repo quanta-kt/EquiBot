@@ -18,6 +18,8 @@ class General(commands.Cog):
         Changes the prefix for the bot in your server.
         """
 
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
         if not await util.ensure_args(ctx, 1, args):
             return
 
@@ -36,6 +38,8 @@ class General(commands.Cog):
         Set your AFK status.
         People who mention you will get notice of you being AFK.
         """
+
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
 
         reason =  ' '.join(reason)
         if reason.isspace() or reason == '':

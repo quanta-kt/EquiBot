@@ -17,6 +17,8 @@ class Birthdays(commands.Cog):
         Add your name to birthday calendar!
         """
 
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
         if not await util.ensure_args(ctx, 2, args):
             return
 
@@ -118,6 +120,8 @@ class Birthdays(commands.Cog):
         Set-up birthday calendar for server!
         """
 
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
         if not await util.ensureOwner(ctx):
             return
 
@@ -195,6 +199,8 @@ class Birthdays(commands.Cog):
         """
         Set a role to ping when there's somebody's birthday.
         """
+
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
 
         if not await util.ensureOwner(ctx):
             return
