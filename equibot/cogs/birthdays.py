@@ -150,7 +150,16 @@ class Birthdays(commands.Cog):
         )
 
     async def greet_birthday(self, channel, member):
-        await channel.send(f"Happy birthday {member.mention}!")
+        greeting = ""
+
+        if (role_id := await self.repo.get_birthday_ping_role(channel.guild.id)) != None:
+            role = channel.guild.get_role(role_id)
+            greeting += role.mention + "\n"
+
+        greeting += f"It's {member.mention}'s birthday! "
+        greeting += "Everybody go wish them!"
+
+        await channel.send(greeting)
 
     async def birthday_ticker(self, bot: commands.Bot):
         while True:
@@ -180,3 +189,27 @@ class Birthdays(commands.Cog):
                 await self.repo.update_greet_completion_date()
 
             await asyncio.sleep(15)
+
+    @commands.command(usage='birthdayping [role name or mention]')
+    async def birthdayping(self, ctx: commands.Context, *args):
+        """
+        Set a role to ping when there's somebody's birthday.
+        """
+
+        if not await util.ensureOwner(ctx):
+            return
+
+        if not await util.ensure_args(ctx, 1, args):
+            return
+
+        role = discord.utils.find(
+            lambda role: role.name == args[0] or role.mention == args[0],
+            ctx.guild.roles
+        )
+
+        if role == None:
+            await ctx.send(f"Can't find role: {args[0]}")
+            return
+        
+        await self.repo.set_bithday_ping_role(ctx.guild.id, role.id)
+        await ctx.send(f"Updated birthday ping role to {role.name}")

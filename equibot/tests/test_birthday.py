@@ -5,6 +5,7 @@ from .fixtures import delete_db
 from ..repository import Repository
 
 GUILD_ID = 55
+GUILD2_ID = 65
 CAL_CHAN = 21
 GREET_CHAN = 22
 USER1 = 77
@@ -59,3 +60,25 @@ async def test_birthday_calendar():
     ids = ids[::-1]
     await repo.update_calendar_message_ids(GUILD_ID, ids)
     assert await repo.get_calendar_message_ids(GUILD_ID) == ids
+
+@pytest.mark.asyncio()
+async def test_bithday_ping_roles():
+
+    ROLE_ID1, ROLE_ID2  = 56, 64
+
+    repo = await Repository.create('_test.db')
+
+    assert await repo.get_birthday_ping_role(GUILD_ID) == None
+    assert await repo.get_birthday_ping_role(GUILD2_ID) ==  None
+
+    await repo.set_bithday_ping_role(GUILD_ID, ROLE_ID1)
+    await repo.set_bithday_ping_role(GUILD2_ID, ROLE_ID2)
+
+    assert await repo.get_birthday_ping_role(GUILD2_ID) == ROLE_ID2
+    assert await repo.get_birthday_ping_role(GUILD_ID) == ROLE_ID1
+
+    await repo.set_bithday_ping_role(GUILD_ID, ROLE_ID2)
+    await repo.set_bithday_ping_role(GUILD2_ID, ROLE_ID1)
+
+    assert await repo.get_birthday_ping_role(GUILD2_ID) == ROLE_ID1
+    assert await repo.get_birthday_ping_role(GUILD_ID) == ROLE_ID2
