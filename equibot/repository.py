@@ -185,3 +185,19 @@ class Repository:
         """
 
         return await self.sql.get_calendar_message_ids(guild_id)
+
+    async def set_bithday_ping_role(self, guild_id, role_id):
+        """
+        Stores a role ID for birthday notifications.
+        The role will be mentioned in any birthday greetings.
+        """
+
+        await self.sql.set_birthday_ping_role(guild_id, role_id)
+
+    async def get_birthday_ping_role(self, guild_id):
+        """
+        Returns the role ID stored via `set_birthday_ping_role`
+        for the guild. Returns None if does not exists
+        """
+
+        return await self.sql.get_birthday_ping_role(guild_id)

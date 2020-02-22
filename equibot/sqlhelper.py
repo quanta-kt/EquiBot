@@ -198,6 +198,26 @@ sql_get_calendar_messages = """
     WHERE guild_id = ?
     """
 
+sql_create_birthday_ping_role_table = """
+    CREATE TABLE IF NOT EXISTS birthday_ping(
+        guild_id INTEGER PRIMARY KEY,
+        role_id INTEGER
+    )
+    """
+
+sql_set_birthday_ping_role = """
+    INSERT INTO birthday_ping(guild_id, role_id)
+    VALUES(?, ?)
+
+    ON CONFLICT(guild_id)
+    DO UPDATE SET role_id = excluded.role_id
+    """
+
+sql_get_birthday_ping_role = """
+    SELECT role_id
+    FROM birthday_ping
+    WHERE guild_id = ?"""
+
 class SqlHelper:
     """
     Class used for running SQL queries.
@@ -234,6 +254,7 @@ class SqlHelper:
             cursor.execute(sql_create_birthday_completion_row)
             conn.commit()
             cursor.execute(sql_create_calendar_messages_table)
+            cursor.execute(sql_create_birthday_ping_role_table)
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
         finally:
@@ -477,6 +498,33 @@ class SqlHelper:
             cursor.execute(sql_get_calendar_messages, (guild_id,))
 
             return cursor.fetchone()
+
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def set_birthday_ping_role(self, guild_id, role_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_set_birthday_ping_role, (guild_id, role_id))
+            conn.commit()
+        except sqlite3.Error as e:
+            print(e, file=sys.stderr)
+        finally:
+            if conn: conn.close()
+
+    async def get_birthday_ping_role(self, guild_id):
+        try:
+            conn = self.connect_db()
+            cursor = conn.cursor()
+            cursor.execute(sql_get_birthday_ping_role, (guild_id,))
+
+            if (result := cursor.fetchone()) != None:
+                return result[0]
+
+            return None
 
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
