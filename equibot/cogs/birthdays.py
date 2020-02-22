@@ -165,9 +165,8 @@ class Birthdays(commands.Cog):
         while True:
 
             if await self.repo.has_greeted_today():
-                pass
-                #await asyncio.sleep(60 * 30) #Half hour
-                #continue
+                await asyncio.sleep(60 * 30) #Half hour
+                continue
 
             birthdays = await self.repo.get_birthday_kids()
 
