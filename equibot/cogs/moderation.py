@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import asyncio
 
 from . import util
 from .. import repository
@@ -150,3 +151,24 @@ class Moderation(commands.Cog):
             
         await ctx.guild.ban(member)
         await ctx.send(f"Banned user **{str(member)}**")
+
+    
+    @commands.command(usage='timer [time in sec]')
+    async def timer(self, ctx: commands.Context, *args):
+        """
+        Sets a timer. You'll get pinged when the timer finishes!
+        """
+
+        print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
+
+        if not await util.ensure_args(ctx, 1, args):
+            return
+
+        if not args[0].isnumeric():
+            await ctx.send("I expect numbers there ;-;")
+            return
+
+        await ctx.message.add_reaction("⏰")
+
+        await asyncio.sleep(int(args[0]))
+        await ctx.send(f"{ctx.author.mention} Your timer is done!")
