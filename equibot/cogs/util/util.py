@@ -13,12 +13,22 @@ async def ensureModeratorOrOwner(ctx, repo):
     if ctx.author == ctx.guild.owner:
         return True
 
-    moderators = await repo.get_all_mod_roles(ctx.guild.id)
-    for mod in moderators:
-        if mod in map(lambda role: role.id, ctx.author.roles):
-            return True
+    if await isModerator(ctx.author, ctx.guild.id, repo):
+        return True
 
     await ctx.send("You don't have permission to use this command ;-;")
+    return False
+
+async def isModerator(member, guild_id, repo):
+    """
+    Returns true if member is registered as Moderator.
+    """
+
+    moderators = await repo.get_all_mod_roles(guild_id)
+    for mod in moderators:
+        if mod in map(lambda role: role.id, member.roles):
+            return True
+
     return False
 
 async def ensureOwner(ctx):

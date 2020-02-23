@@ -108,3 +108,45 @@ class Moderation(commands.Cog):
 
         notice = await ctx.send(f"Deleted ***{n}*** messages, RIP!")
         await notice.delete(delay=5) #Fades away too! ;)
+
+    @commands.command(usage='kick [id | mention | name | nickname]')
+    async def kick(self, ctx: commands.Context, *, arg):
+        """
+        Kicks the specified members from server.
+        """
+
+        if not await util.ensureModeratorOrOwner(ctx, self.repo):
+            return
+
+        if await util.isModerator(ctx.author, ctx.guild.id, self.repo):
+            await ctx.send("Wait what? Tryna kick a moderator? ;-;")
+            return
+
+        try:
+            member = await commands.MemberConverter().convert(ctx, arg)
+        except commands.CommandError:
+            await ctx.send(f"Can't find member: {arg} ;-;")
+            
+        await ctx.guild.kick(member)
+        await ctx.send(f"Kicked user **{str(member)}**")
+
+    @commands.command(usage='ban [id | mention | name | nickname]')
+    async def ban(self, ctx: commands.Context, *, arg):
+        """
+        Bans the specified members from server.
+        """
+
+        if not await util.ensureModeratorOrOwner(ctx, self.repo):
+            return
+
+        if await util.isModerator(ctx.author, ctx.guild.id, self.repo):
+            await ctx.send("Wait what? Tryna ban a moderator? ;-;")
+            return
+
+        try:
+            member = await commands.MemberConverter().convert(ctx, arg)
+        except commands.CommandError:
+            await ctx.send(f"Can't find member: {arg} ;-;")
+            
+        await ctx.guild.ban(member)
+        await ctx.send(f"Banned user **{str(member)}**")
