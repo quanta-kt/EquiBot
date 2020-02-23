@@ -54,7 +54,7 @@ async def on_message(message: discord.Message):
     for user in message.mentions:
         afk_status = await repo.get_afk_status(message.guild.id, user.id)
         if afk_status == None:
-            return
+            continue
 
         await message.channel.send(
             f"Nice, but {user.display_name} is AFK.\n" +
