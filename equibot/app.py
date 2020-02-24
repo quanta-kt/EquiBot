@@ -36,7 +36,7 @@ async def on_message(message: discord.Message):
     if message.author == bot.user:
         return
 
-    if await actions.invoke(message): return
+    await actions.invoke(message)
     await bot.process_commands(message)
 
 def main(debug=False):

@@ -20,17 +20,17 @@ class MessageActions:
     async def invoke(self, message):
         """
         Called when a message arrives.
-        Each action funtion retuns True if the action was taken.
-        No further processing is done if that is true.
+        Each function in list `action` is called with the message
+        object as the only parameter
         The action functions can be coroutines.
         """
 
         for action in self.actions:
             #For now all the actions are coroutines however
             if asyncio.iscoroutinefunction(action):
-                if await action(message): return True
+                await action(message)
             else:
-                if action(message): return True
+                action(message)
 
     async def botMention(self, message):
         """
@@ -44,10 +44,6 @@ class MessageActions:
                 f"My prefix here is: **{prefix}**\n" +
                 f"Try **{prefix}help** to get list of commands!"
             )
-            return True
-
-        #The `else` is just a redability concern
-        else: return False
 
     async def backFromAFK(self, message):
         """
@@ -63,9 +59,6 @@ class MessageActions:
             )
 
             await msg.delete(delay=5)
-            return True
-
-        else: return False
 
     async def afkMention(self, message):
         """
@@ -81,5 +74,3 @@ class MessageActions:
                 f"Nice, but {user.display_name} is AFK.\n" +
                 f"**Reason:** {afk_status}"
             )
-
-        return False #Always returns False so that kick/ban commands continue to work
