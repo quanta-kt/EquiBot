@@ -5,6 +5,7 @@ import discord
 
 from . import repository
 from . import cogs
+from .message_actions import MessageActions
 
 repo = repository.Repository()
 
@@ -14,6 +15,8 @@ bot = commands.Bot(
 
     description="""A nice general purpose bot for your server"""
 )
+
+actions = MessageActions(bot, repo)
 
 #Register COGs
 bot.add_cog(cogs.General(repo))
@@ -30,34 +33,10 @@ async def on_ready():
 
 @bot.event
 async def on_message(message: discord.Message):
+    if message.author == bot.user:
+        return
 
-    if bot.user.mentioned_in(message) and not message.mention_everyone:
-        #We have got a mention!
-        prefix = repo.get_prefix(message.guild.id)
-        await message.add_reaction('👀')
-        await message.channel.send(
-            f"My prefix here is: **{prefix}**\n" +
-            f"Try **{prefix}help** to get list of commands!"
-        )
-
-    if (await repo.get_afk_status(message.guild.id, message.author.id)) != None:
-        await repo.clear_afk_status(message.guild.id, message.author.id)
-        msg = await message.channel.send(
-            f"**Welcome back {message.author.display_name}!**\n" +
-            "I've removed your AFK status"
-        )
-        await msg.delete(delay=5)
-
-    for user in message.mentions:
-        afk_status = await repo.get_afk_status(message.guild.id, user.id)
-        if afk_status == None:
-            continue
-
-        await message.channel.send(
-            f"Nice, but {user.display_name} is AFK.\n" +
-            f"**Reason:** {afk_status}"
-        )
-
+    if await actions.invoke(message): return
     await bot.process_commands(message)
 
 def main(debug=False):
