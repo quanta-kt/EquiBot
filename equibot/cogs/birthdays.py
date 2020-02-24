@@ -35,7 +35,11 @@ class Birthdays(commands.Cog):
         month_limit = calendar.monthrange(0, month)[1]
         if (day := int(args[1])) > month_limit:
             await ctx.send(
-                f"{calendar.month_name[month]} has only {month_limit} days ;-;"
+                util.simpleEmbed(
+                    ";-;",
+                    f"{calendar.month_name[month]} has only {month_limit} days",
+                    discord.Color.red()
+                )
             )
 
             return
@@ -43,9 +47,12 @@ class Birthdays(commands.Cog):
         await self.repo.set_birthdate(ctx.author.id, month, day)
 
         await ctx.send(
-            "Awesome!\n" + 
-            "We will remember you birthday\n" +
-            "UmU"
+            embed = util.simpleEmbed(
+                "Awesome!",
+
+                "We will remember your birthday\n" +
+                "UmU"
+            )
         )
 
         try:
@@ -67,50 +74,44 @@ class Birthdays(commands.Cog):
         Returns False if calendar channel was not registered or not found.
         """
 
-        builder_map = dict(
-            map(
-                lambda b: (b.month, b),
-                [util.CalendarBuilder(month) for month in range(1, 13)]
-            )
-        )
+        #Check if we know about which channel to post calendar.
+        channel_ids = await self.repo.get_birthday_channels(guild.id)
+        if channel_ids == None:
+            return False
+
+        channel = guild.get_channel(channel_ids[0])
+        if channel == None:
+            return False
+
+        builders = [util.CalendarEmbedBuilder(month) for month in range(1, 13)]
 
         for member in guild.members:
             if (bd := await self.repo.get_user_birthdate(member.id)) == None:
                 continue
 
-            builder_map[bd[0]].add(member.mention, bd[1])
+            month = bd[0]
+            day = bd[1]
 
-        #Check if we know about which channel to post calendar.
-        channels = (await self.repo.get_birthday_channels(guild.id))
-        
-        if channels == None:
-            return False
-
-        calendar_channel_id = channels[0]
-
-        channel = guild.get_channel(calendar_channel_id)
-        if channel == None:
-            return False
+            builders[month - 1].add(member.mention, day)
 
         #Check if calendar messages were created
         #Create if not.
         #id at 0 is for January, 1 for February and so on.
-
         ids = await self.repo.get_calendar_message_ids(guild.id)
         if ids == None: #Send new messages.
             ids = []
-            for month in range(1, 13):
-                msg = await channel.send(str(builder_map[month]))
+            for builder in builders:
+                msg = await channel.send(embed=builder.build())
                 ids.append(msg.id)
 
             #Store these in db for future use.
             await self.repo.update_calendar_message_ids(guild.id, ids)
 
         else: #Edit exsiting messages
-            for month in range(1, 13):
-                message_id = ids[month - 1]
+            for i in range(12):
+                message_id = ids[i]
                 msg = await channel.fetch_message(message_id)
-                await msg.edit(content=builder_map[month])
+                await msg.edit(content="", embed=builders[i].build())
 
         return True
 
@@ -146,11 +147,14 @@ class Birthdays(commands.Cog):
         await self.update_calendar(ctx.guild)
 
         await ctx.send(
-            "Awesome!\n" +
-            "I've set it up as follows:\n" +
-            f"**Bithday calendar at:** {calendar_channel.mention}\n" +
-            f"**Greetings at:** {greet_channel.mention}\n" +
-            ":3"
+            embed = util.simpleEmbed(
+                "Awesome!",
+
+                "I've set it up as follows:\n" +
+                f"**Bithday calendar at:** {calendar_channel.mention}\n" +
+                f"**Greetings at:** {greet_channel.mention}\n" +
+                ":3"
+            )
         )
 
     async def greet_birthday(self, channel, member):
@@ -163,7 +167,9 @@ class Birthdays(commands.Cog):
         greeting += f"It's {member.mention}'s birthday! "
         greeting += "Everybody go wish them!"
 
-        await channel.send(greeting)
+        await channel.send(
+            embed = util.simpleEmbed("Party time! 🎉", greeting)
+        )
 
     async def birthday_ticker(self, bot: commands.Bot):
         while True:
@@ -214,8 +220,19 @@ class Birthdays(commands.Cog):
         )
 
         if role == None:
-            await ctx.send(f"Can't find role: {args[0]}")
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ";-;",
+                    f"Can't find role: {args[0]}",
+                    discord.Color.red()
+                )
+            )
             return
         
         await self.repo.set_bithday_ping_role(ctx.guild.id, role.id)
-        await ctx.send(f"Updated birthday ping role to {role.name}")
+        await ctx.send(
+            embed = util.simpleEmbed(
+                "Done",
+                f"Updated birthday ping role to {role.name}"
+            )
+        )

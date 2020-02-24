@@ -1,8 +1,9 @@
 import calendar
+from discord import Embed
 
-class CalendarBuilder:
+class CalendarEmbedBuilder:
     """
-    Class for constructing calendar messages.
+    Class for constructing calendar page embeds.
     """
 
     def __init__(self, month):
@@ -12,7 +13,7 @@ class CalendarBuilder:
         self.monthrange = calendar.monthrange(0, month)[1]
         self.birthdays = dict(
             map(
-                lambda n: (n, []),
+                lambda n: (n, list()),
                 range(1, self.monthrange + 1)
             )
         )
@@ -23,27 +24,17 @@ class CalendarBuilder:
         """
         self.birthdays[day].append(person)
 
-    def __str__(self):
+    def build(self):
         """
-        Builds and returns the message text.
+        Builds and returns the message embed.
         """
-
-        header = f'**{self.name}**'.rjust(20) + '\n'
-        header += '♡∞:｡.｡　　｡.｡:∞♡'.rjust(20) + '\n\n'
 
         body = ''
 
         for day in range(1, self.monthrange + 1):
+            body += f"[ {day} ] {' '.join(self.birthdays[day])}\n"
 
-            day_str = str(day).ljust(2)
-
-            if len(self.birthdays[day]) == 0:
-                body += f'{day_str} 『 '.ljust(30) + ' 』\n'
-                continue
-            
-            chunk = ' '.join(self.birthdays[day])
-            body += f'{day_str} 『 {chunk}'.ljust(30) + ' 』\n'
-
-        footer = '♡∞:｡.｡　　｡.｡:∞♡'.rjust(20)
-
-        return header + body + footer
+        return Embed(
+            title=('\\~' * 8) + self.name + ('\\~' * 8),
+            description=body
+        )

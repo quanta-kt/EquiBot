@@ -1,4 +1,5 @@
 import asyncio
+from .cogs.util import simpleEmbed
 
 class MessageActions:
     """
@@ -54,8 +55,10 @@ class MessageActions:
         if (await self.repo.get_afk_status(message.guild.id, message.author.id)) != None:
             await self.repo.clear_afk_status(message.guild.id, message.author.id)
             msg = await message.channel.send(
-                f"**Welcome back {message.author.display_name}!**\n" +
-                "I've removed your AFK status"
+                embed = simpleEmbed(
+                    f"Welcome back {message.author.display_name}!",
+                    "I've removed your AFK status"
+                )
             )
 
             await msg.delete(delay=5)
@@ -71,6 +74,9 @@ class MessageActions:
                 continue
 
             await message.channel.send(
-                f"Nice, but {user.display_name} is AFK.\n" +
-                f"**Reason:** {afk_status}"
+                embed = simpleEmbed(
+                    "Oops!",
+                    f"**{user.display_name} is not here**\n" +
+                    f"**Reason:** {afk_status}"
+                )
             )
