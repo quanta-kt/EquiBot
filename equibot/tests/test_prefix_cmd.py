@@ -13,7 +13,7 @@ GUILD2_ID = 77551166
 
 @pytest.mark.asyncio()
 async def test():
-    repo = await repository.Repository.create('_test.db')
+    repo = repository.Repository('_test.db')
 
     assert repo.get_prefix(GUILD_ID) == constants.DEFAULT_COMMAND_PREFIX
 

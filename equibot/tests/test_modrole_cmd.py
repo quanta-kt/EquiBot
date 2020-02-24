@@ -13,7 +13,7 @@ ROLE2 = 3
 
 @pytest.mark.asyncio()
 async def test_add_remove():
-    repo = await repository.Repository.create('_test.db')
+    repo = repository.Repository('_test.db')
 
     assert await repo.add_mod_role(GUILD1, ROLE1)
     assert await repo.add_mod_role(GUILD2, ROLE1)

@@ -13,7 +13,7 @@ USER2 = 78
 
 @pytest.mark.asyncio()
 async def test_birthdays():
-    repo = await Repository.create('_test.db')
+    repo = Repository('_test.db')
 
     assert await repo.get_birthday_channels(GUILD_ID) == None
     assert await repo.get_birthday_kids() == None
@@ -35,7 +35,7 @@ async def test_birthdays():
 
 @pytest.mark.asyncio()
 async def test_birthday_completion():
-    repo = await Repository.create('_test.db')
+    repo = Repository('_test.db')
 
     assert not await repo.has_greeted_today()
     await repo.update_greet_completion_date()
@@ -43,13 +43,13 @@ async def test_birthday_completion():
     assert await repo.has_greeted_today()
 
     del repo
-    repo = await Repository.create('_test.db')
+    repo = Repository('_test.db')
     assert await repo.has_greeted_today()
 
 @pytest.mark.asyncio()
 async def test_birthday_calendar():
 
-    repo = await Repository.create('_test.db')
+    repo = Repository('_test.db')
 
     assert await repo.get_calendar_message_ids(GUILD_ID) == None
 
@@ -66,7 +66,7 @@ async def test_bithday_ping_roles():
 
     ROLE_ID1, ROLE_ID2  = 56, 64
 
-    repo = await Repository.create('_test.db')
+    repo = Repository('_test.db')
 
     assert await repo.get_birthday_ping_role(GUILD_ID) == None
     assert await repo.get_birthday_ping_role(GUILD2_ID) ==  None

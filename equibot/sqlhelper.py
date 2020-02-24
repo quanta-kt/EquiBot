@@ -224,12 +224,9 @@ class SqlHelper:
     Not to be used directly, use `Repository` class for reading/writing data.
     """
 
-    @classmethod
-    async def create(cls, filename):
-        sql = SqlHelper()
-        sql.db_file = filename
-        await sql.create_tables()
-        return sql
+    def __init__(self, filename):
+        self.db_file = filename
+        self.create_tables()
 
     def connect_db(self):
         try:
@@ -241,7 +238,7 @@ class SqlHelper:
         except sqlite3.Error as e:
             print(e, file=sys.stderr)
 
-    async def create_tables(self):
+    def create_tables(self):
         try:
             conn = self.connect_db()
             cursor = conn.cursor()

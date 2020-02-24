@@ -6,6 +6,8 @@ import discord
 from . import repository
 from . import cogs
 
+repo = repository.Repository()
+
 bot = commands.Bot(
     command_prefix = lambda bot, message:
         repo.get_prefix(message.guild.id),
@@ -13,23 +15,18 @@ bot = commands.Bot(
     description="""A nice general purpose bot for your server"""
 )
 
-repo = None #Initiated in `on_ready()`
+#Register COGs
+bot.add_cog(cogs.General(repo))
+bot.add_cog(cogs.Moderation(repo))
+
+birthdayscog = cogs.Birthdays(repo)
+bot.add_cog(birthdayscog)
 
 @bot.event
 async def on_ready():
     print("Bot online.")
-    global repo
-    repo = await repository.Repository.create()
-
-    #Register COGs
-    bot.add_cog(cogs.General(repo))
-    bot.add_cog(cogs.Moderation(repo))
-
-    birthdayscog = cogs.Birthdays(repo)
-    bot.add_cog(birthdayscog)
-    bot.loop.create_task(birthdayscog.birthday_ticker(bot))
-
     await bot.change_presence(activity=discord.Game(name="Ping for help!"))
+    bot.loop.create_task(birthdayscog.birthday_ticker(bot))
 
 @bot.event
 async def on_message(message: discord.Message):
@@ -64,7 +61,7 @@ async def on_message(message: discord.Message):
     await bot.process_commands(message)
 
 def main(debug=False):
-    bot.run(repository.get_bot_token(debug))
+    bot.run(repo.get_bot_token(debug))
 
 if __name__ == '__main__':
     main()
