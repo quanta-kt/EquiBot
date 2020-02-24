@@ -5,6 +5,7 @@ dist/**
 
 database.db
 _test.db
+_test.db-journal
 secrets.json
 
 #VS Code configurations

@@ -4,34 +4,28 @@ import datetime
 from . import sqlhelper
 from . import constants
 
-#This is left as non-async for a purose
-def get_bot_token(debug=False):
-    """
-    Returns the Bot's Token for Auth with Discord.
-    Set debug to True when using testing Bot.
-    """
-    with open('secrets.json') as fp:
-        dat = json.load(fp)
-
-        if debug:
-            return dat['debug_token']
-        else:
-            return dat['production_token']
-
 class Repository:
     """
     Repository for storage using SQL.
     This is basically a bridge between sqlhelper and app
     """
 
-    @classmethod
-    async def create(cls, sql_file=constants.DATBASE_FILE):
-        repo = Repository()
-        repo.sql = await sqlhelper.SqlHelper.create(sql_file)
-        return repo
+    def __init__(self, sql_file=constants.DATBASE_FILE):
+        self.sql = sqlhelper.SqlHelper(sql_file)
 
-    #This function isn't async because we need to use it
-    #outside the coroutines
+    def get_bot_token(self, debug=False):
+        """
+        Returns the Bot's Token for Auth with Discord.
+        Set debug to True when using testing Bot.
+        """
+        with open('secrets.json') as fp:
+            dat = json.load(fp)
+
+            if debug:
+                return dat['debug_token']
+            else:
+                return dat['production_token']
+
     def get_prefix(self, guild_id):
         prefix = self.sql.get_guild_prefix(guild_id)
 
