@@ -47,7 +47,9 @@ class General(commands.Cog):
 
         await self.repo.set_afk_status(ctx.guild.id, ctx.author.id, reason)
         await ctx.send(
-            f"**Goodbye {ctx.author.display_name}!** \n" +
-            "I've set your AFK status to:\n" +
-            reason
+            embed = util.simpleEmbed(
+                f"Goodbye {ctx.author.display_name}!",
+                "**I've set your AFK status to:**\n" +
+                reason
+            )
         )
