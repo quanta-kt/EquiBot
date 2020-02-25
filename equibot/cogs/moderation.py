@@ -111,46 +111,106 @@ class Moderation(commands.Cog):
         await notice.delete(delay=5) #Fades away too! ;)
 
     @commands.command(usage='kick [id | mention | name | nickname]')
-    async def kick(self, ctx: commands.Context, *, arg):
+    async def kick(self, ctx: commands.Context, *arg):
         """
         Kicks the specified members from server.
         """
 
-        if not await util.ensureModeratorOrOwner(ctx, self.repo):
+        if len(arg) == 0:
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ":(",
+                    "Please specify a member to kick.",
+                    discord.Color.red()
+                )
+            )
             return
 
-        if await util.isModerator(ctx.author, ctx.guild.id, self.repo):
-            await ctx.send("Wait what? Tryna kick a moderator? ;-;")
+        arg = ' '.join(arg)
+
+        if not await util.ensureModeratorOrOwner(ctx, self.repo):
             return
 
         try:
             member = await commands.MemberConverter().convert(ctx, arg)
         except commands.CommandError:
-            await ctx.send(f"Can't find member: {arg} ;-;")
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ";-;",
+                    f"Can't find member: **{arg}**",
+                    discord.Color.red()
+                )
+            )
+            return
+
+        if await util.isModerator(member, ctx.guild.id, self.repo):
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ";-;",
+                    "You can't ban a moderator.",
+                    discord.Color.red()
+                )
+            )
+            return
             
         await ctx.guild.kick(member)
-        await ctx.send(f"Kicked user **{str(member)}**")
+        await ctx.send(
+            embed = util.simpleEmbed(
+                "Done.",
+                f"Kicked user **{str(member)}**"
+            )
+        )
 
     @commands.command(usage='ban [id | mention | name | nickname]')
-    async def ban(self, ctx: commands.Context, *, arg):
+    async def ban(self, ctx: commands.Context, *arg):
         """
         Bans the specified members from server.
         """
 
-        if not await util.ensureModeratorOrOwner(ctx, self.repo):
+        if len(arg) == 0:
+            await ctx.send(
+                embed=util.simpleEmbed(
+                    ":(",
+                    "Please specify a member to ban.",
+                    discord.Color.red()
+                )
+            )
             return
 
-        if await util.isModerator(ctx.author, ctx.guild.id, self.repo):
-            await ctx.send("Wait what? Tryna ban a moderator? ;-;")
+        arg = ' '.join(arg)
+
+        if not await util.ensureModeratorOrOwner(ctx, self.repo):
             return
 
         try:
             member = await commands.MemberConverter().convert(ctx, arg)
         except commands.CommandError:
-            await ctx.send(f"Can't find member: {arg} ;-;")
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ";-;",
+                    f"Can't find member: **{arg}**",
+                    discord.Color.red()
+                )
+            )
+            return
+
+        if await util.isModerator(member, ctx.guild.id, self.repo):
+            await ctx.send(
+                embed = util.simpleEmbed(
+                    ";-;",
+                    "You can't ban a moderator.",
+                    discord.Color.red()
+                )
+            )
+            return
             
         await ctx.guild.ban(member)
-        await ctx.send(f"Banned user **{str(member)}**")
+        await ctx.send(
+            embed = util.simpleEmbed(
+                "Done.",
+                f"Banned user **{str(member)}**"
+            )
+        )
 
     
     @commands.command(usage='timer [time in sec]')
