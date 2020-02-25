@@ -45,12 +45,12 @@ Before you can test/deploy the bot, you need to create a file named 'secrets.jso
 Make sure you're in the directory where the `secrets.json` is stored.
 Now run the bot using:
 ```
-python -m EquiBot
+python -m equiBot
 ```
 
 In order to use the debug bot token instead, use:
 ```
-python -m EquiBot --debug
+python -m equiBot --debug
 ```
 
 ### Test
