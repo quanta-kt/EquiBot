@@ -19,7 +19,7 @@ bot = commands.Bot(
 actions = MessageActions(bot, repo)
 
 #Register COGs
-bot.add_cog(cogs.General(repo))
+bot.add_cog(cogs.General(bot, repo))
 bot.add_cog(cogs.Moderation(repo))
 
 birthdayscog = cogs.Birthdays(repo)
