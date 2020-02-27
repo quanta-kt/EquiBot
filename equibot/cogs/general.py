@@ -62,13 +62,14 @@ class General(commands.Cog):
     async def timer_tick(self):
         while True:
 
+            curr_time = time.time()
             filtered = []
 
             for timer in self.timers:
                 finish_time = timer[0]
                 ctx = timer[1]
 
-                if finish_time <= time.time():
+                if finish_time <= curr_time:
                     await ctx.send(f"{ctx.author.mention} Your timer is done!")
                 else:
                     filtered.append(timer)
@@ -76,7 +77,7 @@ class General(commands.Cog):
             self.timers = filtered #Forget about timers that are done
             await asyncio.sleep(1)
 
-    @commands.command(usage='timer [time in sec]')
+    @commands.command(usage='timer [time in sec |  Xh Xm Xs]')
     async def timer(self, ctx: commands.Context, *args):
         """
         Sets a timer. You'll get pinged when the timer finishes!
@@ -84,18 +85,46 @@ class General(commands.Cog):
 
         print(f'Command {ctx.command.name} from guild {ctx.guild.name}')
 
-        if not await util.ensure_args(ctx, 1, args):
+        if len(args) == 0:
+            await ctx.send(
+                "Incorrect usage ;-;\n"
+                "I expect atleast one parameter."
+            )
+
             return
 
-        if not args[0].isnumeric():
-            await ctx.send("I expect numbers there ;-;")
-            return
+        finish_time = 0
 
-        finish_time = time.time() + int(args[0])
-        self.timers.append(
-            (finish_time, ctx)
-        )
+        for token in args:
 
+            if token.isnumeric():
+                finish_time += int(token)
+                continue
+
+            val = token[:-1]
+            unit = token[-1].lower()
+
+            if not val.isnumeric():
+                await ctx.send(f"*{val}* was expected to be a numeric value. ;-;")
+                return
+
+            val = int(val)
+
+            if unit == 's':
+                finish_time += val
+            elif unit == 'm':
+                finish_time += (val * 60)
+            elif unit == 'h':
+                finish_time += (val * 60 * 60)
+            else:
+                await ctx.send(
+                    f"Unknown time unit: {unit}\n" +
+                    "Valid options are: h, m, s"
+                )
+
+                return
+
+        self.timers.append((finish_time + time.time(), ctx))
         await ctx.message.add_reaction("⏰")
 
     @commands.command(usage='timercancel')
