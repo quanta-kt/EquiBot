@@ -1,20 +1,14 @@
-
 # EquiBot
 EquiBot is a general purpose and activity management Discord bot written using discord.py.
-This project is currently under massive development and not ready for any production level use.
 
-## Planned features
-I have planned to add these features to the bot, you're welcome to edit this file to add more. :)
+## This repo is Archived
+This repo will no longer be maintaied/developed. I created this bot to learn and get started with discord.py and I'm more or less done with that sole objective. :)
 
-- [x] Command to change the bot prefix,
-- [x] Command to add moderator roles, which have access to some special commands.
-- [x] Birthday greetings! Also draws a nice looking calendar in the specified channel.
-- [ ] Command to schedule and host 'Question Of The Day' event.
+## Features
 
-## Contributing
-This project is open for any suggestions, PRs and feature requests. :smile:
-
-Please make sure you write any necessary tests in `tests` sub-module.
+- Command to change the bot prefix,
+- Kick and ban commands for moderators.
+- Birthday greetings! Also draws a nice looking calendar in the specified channel.
 
 ## Usage and setup
 
